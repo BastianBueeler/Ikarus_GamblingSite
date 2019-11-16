@@ -1,3 +1,56 @@
+<?php
+
+  //include("dbconnector.inc.php");
+
+  $name = $prename = $username = $email = $pattern = $passwordAgain = $error = ""; 
+
+  if($_SERVER['REQUEST_METHOD'] == "POST"){
+    if(isset($_POST['name']) && !empty(trim($_POST['name'])) && strlen(trim($_POST['name'])) <= 30) {
+      $name = htmlspecialchars(trim($_POST['name']));
+    } else {
+      $error .= "Die Eingabe des Namens ist nicht korrekt!! ";
+    }
+
+    if(isset($_POST['prename']) && !empty(trim($_POST['prename'])) && strlen(trim($_POST['prename'])) <= 30){
+      $prename = htmlspecialchars(trim($_POST['prename']));
+    } else {
+      $error .= "Die Eingabe des Vornamens ist nicht korrekt!! ";
+    }
+
+    if(isset($_POST['username']) && !empty(trim($_POST['username'])) && strlen(trim($_POST['username'])) <= 30){
+      $username = htmlspecialchars(trim($_POST['username']));
+    } else {
+      $error .= "Die Eingabe des Benutzernamens ist nicht korrekt!! ";
+    }
+
+    if(isset($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) && strlen(trim($_POST['email'])) <= 40) {
+      $email = htmlspecialchars(trim($_POST['email']));
+    } else {
+      $error .= "Die Eingabe der E-Mail Adresse ist nicht korrekt!! "; 
+    }
+      
+    $pattern = '/(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/';
+
+    if(isset($_POST['password']) && preg_match($pattern, $_POST['password']) && strlen(trim($_POST['password'])) <= 30){
+      $password = htmlspecialchars(trim($_POST['password']));
+    } else {
+      $error .= "Die Eingabe des Passwortes ist nicht korrekt!! ";
+    }
+
+    if(isset($_POST['passwordAgain']) && preg_match($pattern, $_POST['passwordAgain']) && strlen(trim($_POST['passwordAgain'])) <= 30){
+      $passwordAgain = htmlspecialchars(trim($_POST['passwordAgain']));
+    } else {
+      $error .= "Die zweite Eingabe des Passwortes ist nicht korrekt!! ";
+    }
+
+    if(empty($error)){
+      //db insert //db noch nicht erstellt
+    }
+
+  }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,6 +60,13 @@
     <title>Benuter erstellen</title>
   </head>
   <body>
+    <?php
+
+      if(strlen($error)){
+        echo "<div class=\"alert alert-danger\" role=\"alert\">" . $error . "</div>";
+      }  
+
+    ?>
     
     <h3 class="display-4 text-center mt-5 font-weight-bold">IKARUS GLÜCKSSPIELSEITE</h3>
 
@@ -16,30 +76,30 @@
         <p>Benuter erstellen</p>
       </div>
 
-        <form class="text-left" action="" method="">
+        <form class="text-left" action="" method="post">
         <div class="form-group">
           <label for="name">Name:</label>
-          <input type="text" class="form-control" id="name" placeholder="Geben Sie ihren Namen ein" max="30" required> 
+          <input type="text" class="form-control" name="name" id="name" placeholder="Geben Sie ihren Namen ein" max="30" required> 
         </div>
         <div class="form-group">
           <label for="prename">Vorame:</label>
-          <input type="text" class="form-control" id="prename" placeholder="Geben Sie ihren Voramen ein" max="30" required> 
+          <input type="text" class="form-control" name="prename" id="prename" placeholder="Geben Sie ihren Voramen ein" max="30" required> 
         </div>
         <div class="form-group">
           <label for="username">Benutzername:</label>
-          <input type="text" class="form-control" id="username" placeholder="Geben Sie ihren Benutzername ein" max="30" required> 
+          <input type="text" class="form-control" name="username" id="username" placeholder="Geben Sie ihren Benutzername ein" max="30" required> 
         </div>
         <div class="form-group">
           <label for="email">E-Mail Adresse:</label>
-          <input type="email" class="form-control" id="email" placeholder="Geben Sie ihren E-Mail Adresse ein" max="30" required> 
+          <input type="email" class="form-control" name="email" id="email" placeholder="Geben Sie ihren E-Mail Adresse ein" max="30" required> 
         </div>
         <div class="form-group">
           <label for="password">Passwort:</label>
-          <input type="password" class="form-control" id="password" placeholder="Geben Sie ihren Passwort ein" max="30" required> 
+          <input type="password" class="form-control" name="password" id="password" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute" max="30" required> 
         </div>
         <div class="form-group">
           <label for="passwordAgain">Passwort:</label>
-          <input type="password" class="form-control" id="passwordAgain" placeholder="Geben Sie erneut ihren Passwort ein" max="30" required> 
+          <input type="password" class="form-control" name="passwordAgain" id="passwordAgain" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute" max="30" required> 
         </div>
         <button type="submit" class="btn mb-4 w-100 btn-outline-dark">Submit</button>
       </form>
