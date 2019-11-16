@@ -1,0 +1,16 @@
+/*Benutzer erstellen*/
+
+body{
+    background-color: #EDEDED;
+}
+
+.createUserWindow{
+    border: solid black;
+    width: 30%;
+}
+
+.createUserWindowTitle{
+    border-bottom: solid black 3px;
+    font-size: 35px;
+}
+
