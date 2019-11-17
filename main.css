@@ -1,8 +1,10 @@
-/*Benutzer erstellen*/
 
 body{
     background-color: #EDEDED;
 }
+
+
+/*Benutzer erstellen*/
 
 .createUserWindow{
     border: solid black;
@@ -14,3 +16,43 @@ body{
     font-size: 35px;
 }
 
+
+/*Home Seite*/
+
+.header{
+    font-size: 25px;
+}
+
+.boxBlackJack{
+    background-image: url("./blackjack.jpg");
+    width: 200px;
+    height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-size: 25px;
+}
+
+.boxRoulette{
+    background-image: url("./roulette.jpg");
+    width: 200px;
+    height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-size: 25px;
+}
+
+.boxStatistics{
+    background-image: url("./statistiken.jpg");
+    width: 200px;
+    height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-size: 25px;
+}
+
+.content{
+    font-size: 30px;
+}
