@@ -4,6 +4,7 @@
 
   $username = $pattern = $error = ""; 
 
+  if ($_SERVER['REQUEST_METHOD'] == "POST"){
     if(isset($_POST['username']) && !empty(trim($_POST['username'])) && strlen(trim($_POST['username'])) <= 30){
       $username = htmlspecialchars(trim($_POST['username']));
     } else {
@@ -21,6 +22,7 @@
     if(empty($error)){
       //User soll eingeloggt werden
     }
+  }
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +45,7 @@
     <h3 class="display-4 text-center mt-5 font-weight-bold">IKARUS GLÜCKSSPIELSEITE</h3>
 
     <div class="container text-center m-auto bg-white createUserWindow">
-    
+    <form action ="" method="post">
       <div class="p-3 mt-4 mb-4 createUserWindowTitle">
         <p>Login</p>
       </div>
