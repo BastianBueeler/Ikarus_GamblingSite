@@ -1,6 +1,6 @@
 <?php
 
-  //include("dbconnector.inc.php");
+  include("dbconnector.inc.php");
 
   $name = $prename = $username = $email = $pattern = $passwordAgain = $error = ""; 
 
@@ -43,10 +43,41 @@
       $error .= "Die zweite Eingabe des Passwortes ist nicht korrekt!! ";
     }
 
-    if(empty($error)){
-      //db insert //db noch nicht erstellt
+    if(strcmp($password, $passwordAgain) !== 0){
+      $error .= "Die zwei Passwörter sind nicht gleich!! ";
     }
 
+    if(empty($error)){
+
+      $sql = "SELECT username FROM person";
+      $result = $mysqli->query($sql);
+
+      if($result->num_rows > 0){
+        while($row = $result->fetch_assoc()){
+            if(strcmp($row["username"], $username) === 0){
+              $error .= "Diesen Benutzernamen gibt es bereits!! ";
+            }
+        }
+      }
+
+      if(empty($error)){
+
+        $IkarusCoins = 50;
+
+        $password = password_hash($password, PASSWORD_DEFAULT);
+      
+        $stmt = $mysqli->prepare("INSERT INTO person (Username, Password, EMail, Name, Prename, IkarusCoins) VALUES ( ?, ?, ?, ?, ?, ? )");
+
+        $stmt->bind_param("sssssi", $username, $password, $email, $name, $prename, $IkarusCoins);
+
+        $stmt->execute();
+
+        $stmt->close();
+        $mysqli->close();
+
+        header("Location: http://localhost/uebung/Ikarus_GamblingSite/home.php");
+      }
+    }
   }
 
 ?>
@@ -79,19 +110,19 @@
         <form class="text-left" action="" method="post">
         <div class="form-group">
           <label for="name">Name:</label>
-          <input type="text" class="form-control" name="name" id="name" placeholder="Geben Sie ihren Namen ein" max="30" required> 
+          <input type="text" class="form-control" name="name" id="name" placeholder="Geben Sie ihren Namen ein" max="30" value="<?php echo $name ?>" required> 
         </div>
         <div class="form-group">
           <label for="prename">Vorame:</label>
-          <input type="text" class="form-control" name="prename" id="prename" placeholder="Geben Sie ihren Voramen ein" max="30" required> 
+          <input type="text" class="form-control" name="prename" id="prename" placeholder="Geben Sie ihren Voramen ein" max="30" value="<?php echo $prename ?>" required> 
         </div>
         <div class="form-group">
           <label for="username">Benutzername:</label>
-          <input type="text" class="form-control" name="username" id="username" placeholder="Geben Sie ihren Benutzername ein" max="30" required> 
+          <input type="text" class="form-control" name="username" id="username" placeholder="Geben Sie ihren Benutzernamen ein" max="30" value="<?php echo $username ?>" required> 
         </div>
         <div class="form-group">
           <label for="email">E-Mail Adresse:</label>
-          <input type="email" class="form-control" name="email" id="email" placeholder="Geben Sie ihren E-Mail Adresse ein" max="30" required> 
+          <input type="email" class="form-control" name="email" id="email" placeholder="Geben Sie ihre E-Mail Adresse ein" max="40" value="<?php echo $email ?>" required> 
         </div>
         <div class="form-group">
           <label for="password">Passwort:</label>
@@ -101,9 +132,9 @@
           <label for="passwordAgain">Passwort:</label>
           <input type="password" class="form-control" name="passwordAgain" id="passwordAgain" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute" max="30" required> 
         </div>
-        <button type="submit" class="btn mb-4 w-100 btn-outline-dark">Submit</button>
+        <button id="submit" type="submit" class="btn mb-4 w-100 btn-outline-dark">Submit</button>
       </form>
-      <a href=""><button type="submit" class="btn w-100 mb-4 btn-outline-dark">Zurück</button></a>
+      <a href="http://localhost/uebung/Ikarus_GamblingSite/userlogin.php"><button type="submit" class="btn w-100 mb-4 btn-outline-dark">Zurück</button></a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

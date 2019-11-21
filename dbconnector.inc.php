@@ -1,9 +1,9 @@
 <?php
 
 $host = 'localhost';
-$username = 'ApplikationUser';
-$password = 'Passwort'; 
-$database = 'users';
+$username = 'IkarusDBUser';
+$password = 'IkarusPasswort'; 
+$database = 'ikarusgamblingsite';
 
 // mit Datenbank verbinden
 $mysqli = new mysqli($host, $username, $password, $database);
