@@ -2,7 +2,7 @@
 
   //include("dbconnector.inc.php");
 
-  $username = $pattern = $error = ""; 
+  $username = $pattern = $error = $message =""; 
 
   if ($_SERVER['REQUEST_METHOD'] == "POST"){
     if(isset($_POST['username']) && !empty(trim($_POST['username'])) && strlen(trim($_POST['username'])) <= 30){
@@ -21,6 +21,41 @@
 
     if(empty($error)){
       //User soll eingeloggt werden
+      $stmt = $mysqli->prepare("SELECT Password FROM person WHERE username = ?");
+      $stmt->bind_param("s", $username);
+
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+
+      if($stmt->affected_rows !== 0){
+        while($row = $result->fetch_assoc()){
+          if(password_verify($password, $row['Password'])){
+            $_SESSION['username'] = $username;
+            $_SESSION['logedin'] = TRUE;
+            
+            header('Location: home.php');
+          } else {
+            $error .= "Passwort oder Usernamen falsch, versuche es erneuert"
+          }    
+        }
+      }else{
+          $error .= "Passwort oder Usernamen falsch, versuche es erneuert";
+        }
+
+        $stmt->close();
+        $mysqli->close();
+
+
+      $query = "SELECT password FROM person where username=?";
+		  $stmt = $mysqli->prepare($query);
+		  $stmt->bind_param("s", $username);
+		  $stmt->execute();
+      $stmt->close();
+
+		  if($result->$username and $result->$password){
+        $message = "Herzlich wilkommen"
+        header('Location: login.php');
     }
   }
 ?>
