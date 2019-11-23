@@ -29,6 +29,12 @@
         $stmt->close();
         $mysqli->close();
 
+        if(strcmp($username, "Admin")){
+            $showStatisticBox = TRUE;
+        }else{
+            $showStatisticBox = FALSE;
+        }
+
     }else{
         header("Location: http://localhost/uebung/Ikarus_GamblingSite/userlogin.php");
     }
@@ -59,7 +65,7 @@
         </div>
     </div>
 
-    <div class="container bg-white content">
+    <div class="container bg-white content pb-4">
 
         <div class="row mb-4">
             <div class="col-12">
@@ -77,12 +83,18 @@
                 <p class="lead text-center font-weight-bold mt-5 text-white">Roulette</p>
             </div>
         </div>
+        
+        <?php
+            if($showStatisticBox == 0){
+                echo "<div class='row d-flex justify-content-start'>";
+                echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='http://google.com';'>";
+                echo "<p class='lead text-center font-weight-bold mt-5'>Statistiken</p>";
+                echo "</div>";
+                echo "</div>";
+            } else {
 
-        <div class="row d-flex justify-content-start">
-            <div class="boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded" onclick="window.location='http://google.com';">
-                <p class="lead text-center font-weight-bold mt-5">Statistiken</p>
-            </div>
-        </div>
+            }
+        ?>
 
     </div>
 
