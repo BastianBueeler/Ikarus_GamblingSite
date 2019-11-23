@@ -30,9 +30,9 @@
         $mysqli->close();
 
         if(strcmp($username, "Admin")){
-            $showStatisticBox = TRUE;
+            $isAdmin = TRUE;
         }else{
-            $showStatisticBox = FALSE;
+            $isAdmin = FALSE;
         }
 
     }else{
@@ -60,7 +60,11 @@
 
             <div class="dropdown-menu">
                 <a href="signOut.php" target="_self" class="dropdown-item">Benutzer abmelden</a>
-                <a href="deleteUser.php" target="_self" class="dropdown-item">Benutzer löschen</a>
+                <?php
+                    if($isAdmin == 1){
+                        echo "<a href='deleteUser.php' target='_self' class='dropdown-item'>Benutzer löschen</a>";
+                    }
+                ?>
             </div>
         </div>
     </div>
@@ -85,7 +89,7 @@
         </div>
         
         <?php
-            if($showStatisticBox == 0){
+            if($isAdmin == 0){
                 echo "<div class='row d-flex justify-content-start'>";
                 echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='http://google.com';'>";
                 echo "<p class='lead text-center font-weight-bold mt-5'>Statistiken</p>";
