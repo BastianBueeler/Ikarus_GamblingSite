@@ -5,8 +5,6 @@
   session_start();
   session_regenerate_id(true);
 
-  print_r($_SESSION);
-
   $name = $prename = $username = $email = $pattern = $passwordAgain = $error = ""; 
 
   if($_SERVER['REQUEST_METHOD'] == "POST"){
