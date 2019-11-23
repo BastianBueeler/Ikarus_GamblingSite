@@ -20,7 +20,6 @@
     }
 
     if(empty($error)){
-      //User soll eingeloggt werden
       $stmt = $mysqli->prepare("SELECT Password FROM person WHERE username = ?");
       $stmt->bind_param("s", $username);
 
@@ -31,6 +30,8 @@
       if($stmt->affected_rows !== 0){
         while($row = $result->fetch_assoc()){
           if(password_verify($password, $row['Password'])){
+            session_start();
+            session_regenerate_id(true);
             $_SESSION['username'] = $username;
             $_SESSION['logedin'] = TRUE;
             
@@ -45,18 +46,6 @@
 
         $stmt->close();
         $mysqli->close();
-
-
-      $query = "SELECT password FROM person where username=?";
-		  $stmt = $mysqli->prepare($query);
-		  $stmt->bind_param("s", $username);
-		  $stmt->execute();
-      $stmt->close();
-
-		  if($result->$username and $result->$password){
-        $message = "Herzlich wilkommen"
-        header('Location: login.php');
-    }
   }
 ?>
 
