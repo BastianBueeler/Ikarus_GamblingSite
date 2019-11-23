@@ -36,7 +36,7 @@
         }
 
     }else{
-        header("Location: http://localhost/uebung/Ikarus_GamblingSite/userlogin.php");
+        header("Location: http://localhost/Ikarus_GamblingSite/userlogin.php");
     }
 
 

@@ -81,7 +81,7 @@
         $stmt->close();
         $mysqli->close();
 
-        header("Location: http://localhost/uebung/Ikarus_GamblingSite/home.php");
+        header("Location: http://localhost/Ikarus_GamblingSite/home.php");
       }
     }
   }
