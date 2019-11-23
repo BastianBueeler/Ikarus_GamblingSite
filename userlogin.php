@@ -37,7 +37,7 @@
             
             header('Location: home.php');
           } else {
-            $error .= "Passwort oder Usernamen falsch, versuche es erneuert"
+            $error .= "Passwort oder Usernamen falsch, versuche es erneuert";
           }    
         }
       }else{
