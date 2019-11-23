@@ -2,6 +2,11 @@
 
   include("dbconnector.inc.php");
 
+  session_start();
+  session_regenerate_id(true);
+
+  print_r($_SESSION);
+
   $name = $prename = $username = $email = $pattern = $passwordAgain = $error = ""; 
 
   if($_SERVER['REQUEST_METHOD'] == "POST"){
@@ -61,6 +66,9 @@
       }
 
       if(empty($error)){
+
+        $_SESSION['username'] = $username;
+        $_SESSION['logedin'] = TRUE;
 
         $IkarusCoins = 50;
 

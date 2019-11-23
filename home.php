@@ -1,3 +1,41 @@
+<?php
+
+    session_start();
+    session_regenerate_id(true);
+
+    if(isset($_SESSION['logedin'])){
+        
+        include("dbconnector.inc.php");
+
+        $username = $_SESSION['username'];
+
+        $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
+        $stmt->bind_param("s", $username);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            
+            while($row = $result->fetch_assoc()){
+                $IkarusCoins = $row['IkarusCoins'];
+            }
+
+        }else{
+            echo "fail";
+        }
+
+        $stmt->close();
+        $mysqli->close();
+
+    }else{
+        header("Location: http://localhost/uebung/Ikarus_GamblingSite/userlogin.php");
+    }
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,8 +53,8 @@
             <a href="#" class="btn btn-secondary dropdown-toggle" id="dropdownMenu" data-toggle="dropdown" role="button"><i class="far fa-user"></i></a>
 
             <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">Benutzer abmelden</a>
-                <a href="#" class="dropdown-item">Benutzer löschen</a>
+                <a href="signOut.php" target="_self" class="dropdown-item">Benutzer abmelden</a>
+                <a href="deleteUser.php" target="_self" class="dropdown-item">Benutzer löschen</a>
             </div>
         </div>
     </div>
@@ -25,23 +63,23 @@
 
         <div class="row mb-4">
             <div class="col-12">
-                <p class="text-center pt-4 lead">Sie besitzen momentan ... Ikarus coins</p>
+                <p class="text-center pt-4 lead">Sie besitzen momentan <?php echo $IkarusCoins ?> Ikarus coins</p>
             </div>
         </div>
 
         <div class="row mb-4 d-flex justify-content-between">
             
-            <div class="boxBlackJack border border-dark col-5 ml-5 shadow" onclick="window.location='http://google.com';">
+            <div class="boxBlackJack border border-dark col-5 ml-5 shadow rounded" onclick="window.location='http://google.com';">
                 <p class="lead text-center font-weight-bold mt-5 text-primary">Black Jack</p>
             </div>
             
-            <div class="boxRoulette border border-dark col-5 mr-5 shadow" onclick="window.location='http://google.com';">
+            <div class="boxRoulette border border-dark col-5 mr-5 shadow rounded" onclick="window.location='http://google.com';">
                 <p class="lead text-center font-weight-bold mt-5 text-white">Roulette</p>
             </div>
         </div>
 
         <div class="row d-flex justify-content-start">
-            <div class="boxStatistics border border-dark col-5 ml-5 mb-5 shadow" onclick="window.location='http://google.com';">
+            <div class="boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded" onclick="window.location='http://google.com';">
                 <p class="lead text-center font-weight-bold mt-5">Statistiken</p>
             </div>
         </div>
