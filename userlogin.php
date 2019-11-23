@@ -1,6 +1,6 @@
 <?php
 
-  //include("dbconnector.inc.php");
+  include("dbconnector.inc.php");
 
   $username = $pattern = $error = $message =""; 
 
@@ -47,6 +47,7 @@
         $stmt->close();
         $mysqli->close();
   }
+}
 ?>
 
 <!DOCTYPE html>
