@@ -3,7 +3,7 @@ DROP SCHEMA IF EXISTS `ikarusgamblingsite`;
 CREATE SCHEMA IF NOT EXISTS `ikarusgamblingsite` DEFAULT CHARACTER SET utf8;
 USE `ikarusgamblingsite`;
 
-CREATE TABLE PersonStatistic
+CREATE TABLE personstatistic
 (
     ID                    int not null AUTO_INCREMENT,
     CountedBlackJackGames int,
@@ -17,7 +17,7 @@ CREATE TABLE PersonStatistic
     primary key (ID)
 );
 
-CREATE TABLE Person
+CREATE TABLE person
 (
     Username     varchar(30)  not null,
     fk_statistic int          not null,
@@ -27,6 +27,6 @@ CREATE TABLE Person
     PreName      varchar(30)  not null,
     IkarusCoins  int          not null,
     primary key (Username),
-    FOREIGN KEY (fk_statistic) REFERENCES PersonStatistic (ID)
+    FOREIGN KEY (fk_statistic) REFERENCES personstatistic (ID)
 );
 
