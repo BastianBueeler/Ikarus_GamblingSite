@@ -9,8 +9,9 @@ $database = array_key_exists('DB_DATABASE', $_ENV) ? $_ENV['DB_DATABASE'] : 'ika
 $mysqli = new mysqli($host, $username, $password, $database);
 // fehlermeldung, falls verbindung fehl schlägt.
 
-if ($mysqli->connect_error) {
- die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
 }
 
 ?>
