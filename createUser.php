@@ -72,19 +72,16 @@
 
         $password = password_hash($password, PASSWORD_DEFAULT);
       
+        $stmt = $mysqli->prepare("INSERT INTO person (Username, Password, EMail, Name, Prename, IkarusCoins) VALUES ( ?, ?, ?, ?, ?, ? )");
 
-	if ($stmt = $mysqli->prepare("INSERT INTO person (Username, Password, EMail, Name, Prename, IkarusCoins) VALUES ( ?, ?, ?, ?, ?, ? )")) {
         $stmt->bind_param("sssssi", $username, $password, $email, $name, $prename, $IkarusCoins);
 
         $stmt->execute();
 
         $stmt->close();
         $mysqli->close();
-	}	else {
-    die("Errormessage: ". $mysqli->error);
-}
 
-        header("Location: home.php");
+        header("Location: http://localhost/Ikarus_GamblingSite/home.php");
       }
     }
   }

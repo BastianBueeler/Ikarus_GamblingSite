@@ -4,11 +4,11 @@
     session_regenerate_id(true);
 
     if(isset($_SESSION['logedin'])){
-
+        
         include("dbconnector.inc.php");
 
         $username = $_SESSION['username'];
-
+        
         $stmt = $mysqli->prepare("SELECT fk_statistic FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 
@@ -17,14 +17,14 @@
         $result = $stmt->get_result();
 
         if($stmt->affected_rows !== 0){
-
+            
             while($row = $result->fetch_assoc()){
                 $fk_statistic = $row['fk_statistic'];
             }
 
         }else{
             echo "fail1";
-        }
+        } 
 
         $stmt = $mysqli->prepare("DELETE FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
@@ -54,11 +54,11 @@
         $_SESSION = array();
         session_destroy();
 
-        header("Location: userlogin.php");
+        header("Location: http://localhost/Ikarus_GamblingSite/userlogin.php");
 
     }else{
-        header("Location: userlogin.php");
-    }
+        header("Location: http://localhost/Ikarus_GamblingSite/userlogin.php");
+    }    
 
 
 ?>
