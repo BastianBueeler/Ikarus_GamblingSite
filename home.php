@@ -89,7 +89,7 @@
         </div>
         
         <?php
-            if($isAdmin == 0){
+            if($isAdmin == 1){
                 echo "<div class='row d-flex justify-content-start'>";
                 echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='http://google.com';'>";
                 echo "<p class='lead text-center font-weight-bold mt-5'>Statistiken</p>";
