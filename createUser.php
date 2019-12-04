@@ -140,7 +140,7 @@
         </div>
         <button id="submit" type="submit" class="btn mb-4 w-100 btn-outline-dark">Submit</button>
       </form>
-      <a href="http://localhost/uebung/Ikarus_GamblingSite/userlogin.php"><button type="submit" class="btn w-100 mb-4 btn-outline-dark">Zurück</button></a>
+      <a href="http://localhost/Ikarus_GamblingSite/userlogin.php"><button type="submit" class="btn w-100 mb-4 btn-outline-dark">Zurück</button></a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

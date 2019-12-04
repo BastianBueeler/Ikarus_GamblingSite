@@ -93,11 +93,15 @@ class BlackJackGame{
                 # code...
                 break;
 
-            if($MyCardValue >= 10){ 
+            if($MyCardValue >= 10 && $MyCardValue < 14){ 
+                
                 $MyCardAmount += 10;
-            }else{
 
-            }
+            }elseif($MyCardValue < 10){
+                
+                $MyCardAmount += $MyCardValue;
+                
+            }elseif
         }
 
     }

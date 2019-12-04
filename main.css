@@ -1,6 +1,14 @@
 
-body{
+html, body{
     background-color: #EDEDED;
+    margin: 0;
+    height: 100%;
+    margin-top: 0px;
+}
+
+.header{
+    font-size: 25px;
+    height: 100px;
 }
 
 
@@ -18,10 +26,6 @@ body{
 
 
 /*Home Seite*/
-
-.header{
-    font-size: 25px;
-}
 
 .boxBlackJack{
     background-image: url("./blackjack.jpg");
@@ -55,4 +59,25 @@ body{
 
 .content{
     font-size: 30px;
+}
+
+/*Black Jack*/
+
+.blackJackContent{
+    width: 100%;
+    height: calc(100% - 100px);
+}
+
+.playField{
+    height: 100%;
+    width: 80%;
+    margin: 0;
+    float: left;
+}
+
+.playMenu{
+    height: 100%;
+    width: 20%;
+    margin: 0;
+    float: right;
 }
