@@ -15,16 +15,16 @@
 
         <div class="blackJackContent">
             
-            <div class="playField">
-                <div class="dealerCards">
+            <div class="playField d-flex flex-column">
+                <div class="d-flex justify-content-center bg-primary" id="dealerCards">
 
                 </div>
 
-                <div class="cardDeck">
+                <div class="bg-secondary" id="cardDeck">
 
                 </div>
 
-                <div class="myCards">
+                <div class="d-flex justify-content-center bg-danger" id="myCards">
 
                 </div>
             </div>
@@ -33,7 +33,7 @@
                 <p class="text-white">Sie besitzen</p>
 
                 <p class="text-white mb-0">Sie setzen:</p>
-                <input class="w-100" id="amountIkarusCoins" type="text"></input>
+                <input class="w-100" id="amountIkarusCoins" type="number"></input>
                 <br/>
                 <button class="btn btn-dark mt-2 w-100" id="setIkarusCoins">setzen</button>
                 <br/>
@@ -51,7 +51,7 @@
 
         </div>
 
-
+        <script src="ajaxCalls.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

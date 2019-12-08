@@ -68,20 +68,37 @@
         $_SESSION['username'] = $username;
         $_SESSION['logedin'] = TRUE;
 
-        $IkarusCoins = 50;
+        $stmt = $mysqli->prepare("INSERT INTO personstatistic VALUES ()");
 
-        $password = password_hash($password, PASSWORD_DEFAULT);
-      
-        $stmt = $mysqli->prepare("INSERT INTO person (Username, Password, EMail, Name, Prename, IkarusCoins) VALUES ( ?, ?, ?, ?, ?, ? )");
+        if($stmt->execute()){
 
-        $stmt->bind_param("sssssi", $username, $password, $email, $name, $prename, $IkarusCoins);
+          $sql = "SELECT max(id) FROM personstatistic";
+          $result = $mysqli->query($sql);
 
-        $stmt->execute();
+          if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+              print_r($row);
 
-        $stmt->close();
-        $mysqli->close();
+              $fk_id = $row['max(id)'];
+            }
+          }
 
-        header("Location: http://localhost/Ikarus_GamblingSite/home.php");
+          $IkarusCoins = 50;
+
+          $password = password_hash($password, PASSWORD_DEFAULT);
+        
+          $stmt = $mysqli->prepare("INSERT INTO person (Username, fk_statistic, Password, EMail, Name, Prename, IkarusCoins) VALUES ( ?, ?, ?, ?, ?, ?, ? )");
+  
+          $stmt->bind_param("sissssi", $username, $fk_id, $password, $email, $name, $prename, $IkarusCoins);
+  
+          $stmt->execute();
+
+          $stmt->close();
+          $mysqli->close();
+  
+          header("Location: http://localhost/Ikarus_GamblingSite/home.php");
+
+        }
       }
     }
   }
