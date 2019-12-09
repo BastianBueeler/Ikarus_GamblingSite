@@ -1,12 +1,12 @@
 <?php
 
 $host = 'localhost';
-$username = 'IkarusDBUser';
+$uname = 'IkarusDBUser';
 $password = 'IkarusPasswort'; 
 $database = 'ikarusgamblingsite';
 
 // mit Datenbank verbinden
-$mysqli = new mysqli($host, $username, $password, $database);
+$mysqli = new mysqli($host, $uname, $password, $database);
 // fehlermeldung, falls verbindung fehl schlägt.
 
 if ($mysqli->connect_error) {

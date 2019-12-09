@@ -1,60 +1,76 @@
 <?php
 
-session_start();
-session_regenerate_id(true);
-
 class BlackJackGame{
-/*
-    $MyCards = array();
-    $MyCardAmount;
-    $DealerCards = array();
-    $DealerCardAmount;
-    $inset;
-    $bankAmount;
-    $username; 
-*/
 
-    function setAmouont($amount){
+    function setAmount($amount, $bankAmount, $username){
         include("dbconnector.inc.php");
-                
-        if(!isset($_SESSION['bankAmount'])){
-            $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
-            $stmt->bind_param("s", $_SESSION['username']);
 
-            $stmt->execute();
-
-            $result = $stmt->get_result();
-
-            if($stmt->affected_rows !== 0){
-            
-                while($row = $result->fetch_assoc()){
-                    $bankAmount = $row['IkarusCoins'];
-                }
-            }
-        }
+        $amount = strval($amount);
 
         if($amount <= $bankAmount){
-            $_SESSION['inputIkarusCoins'] = $amount;
 
             $newBankAmount = $bankAmount - $amount;
 
-            $newBankAmount;
+            $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
 
-            $username = $_SESSION['username'];
-
-            $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = $username");
-
-            $stmt->bind_param("i", $newBankAmount);
+            $stmt->bind_param("is", $newBankAmount, $username);
 
             $stmt->execute();
             
-            return TRUE;
+            return $newBankAmount;
         }else{
-
-            $_SESSION['bankAmount'] = $bankAmount;
-            return FALSE;
+            return '';
         }
 
+    }
+
+    function getBankAmount($username){
+
+        include("dbconnector.inc.php");
+
+        $bankAmount = 'test';
+        
+        $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
+        $stmt->bind_param("s", $username);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            while($row = $result->fetch_assoc()){
+                $bankAmount = $row['IkarusCoins'];
+            }
+        }
+
+        return $bankAmount;
+    }
+
+    function getCard($takenCards){
+        $cardValue = array{
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "Bauer",
+            "Königin",
+            "König",
+            "Ass",
+        };
+
+        $cardArt = array{
+            "herz",
+            "ecke",
+            "kreuz",
+            "schufle",
+        };
+
+        
     }
 /*
     function getMyCard(){
