@@ -69,11 +69,11 @@
     
     <h3 class="display-4 text-center mt-5 font-weight-bold">IKARUS GLÜCKSSPIELSEITE</h3>
 
-    <div class="container text-center m-auto bg-white createUserWindow">
-    <form action ="" method="post">
-      <div class="p-3 mt-4 mb-4 createUserWindowTitle">
+    <div class="container text-center m-auto bg-white loginUserWindow">
+    <div class="p-3 mt-4 mb-4 loginUserWindowTitle">
         <p>Login</p>
-      </div>
+    </div>
+    <form class="text-left" action ="" method="post">
         <div class="form-group">
           <label for="username">Benutzername:</label>
           <input type="text" class="form-control" name="username" id="username" placeholder="Geben Sie ihren Benutzername ein" max="30" required> 

@@ -11,6 +11,25 @@ html, body{
     height: 100px;
 }
 
+body{
+    background-color: #EDEDED;
+}
+
+/*Benutzer anmelden*/
+
+.loginUserWindow{
+    border: solid black;
+    width: 30%;
+}
+.loginUserWindow.label{
+    text-align: left;
+}
+
+.loginUserWindowTitle{
+    border-bottom: solid black 3px;
+    font-size: 35px;
+}
+
 
 /*Benutzer erstellen*/
 
