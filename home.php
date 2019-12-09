@@ -36,7 +36,7 @@
         }
 
     }else{
-        header("Location: http://localhost/Ikarus_GamblingSite/userlogin.php");
+        header("Location: userlogin.php");
     }
 
 
@@ -83,7 +83,7 @@
                 <p class="lead text-center font-weight-bold mt-5 text-primary">Black Jack</p>
             </div>
             
-            <div class="boxRoulette border border-dark col-5 mr-5 shadow rounded" onclick="window.location='http://google.com';">
+            <div class="boxRoulette border border-dark col-5 mr-5 shadow rounded" onclick="window.location='roulette/roulette.php';">
                 <p class="lead text-center font-weight-bold mt-5 text-white">Roulette</p>
             </div>
         </div>
