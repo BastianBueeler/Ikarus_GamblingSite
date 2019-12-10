@@ -1,25 +1,4 @@
 <?php
-/*
-if(isset($_POST['name'])){
-    if($_POST['name'] === 'dario'){
-
-        $test = array("Dario" => "name", "Grob" => "nachname", "17" => "alter");
-        $test = array_flip($test);
-
-    }elseif($_POST['name'] === 'basti'){
-        $test = array("Basti" => "name", "Bueeler" => "nachname", "18" => "alter");
-        $test = array_flip($test);
-    }elseif($_POST['name'] === 'dome'){
-        $test = array("Dome" => "name", "Luder" => "nachname", "18" => "alter");
-        $test = array_flip($test);
-    }
-
-    $myArr = array($test);
-    $myJSON = json_encode($myArr);
-
-    echo $myJSON;
-}
-*/
 
 if(isset($_POST['function'])){
 
@@ -41,13 +20,29 @@ if(isset($_POST['function'])){
         if($result != ''){
             
             $_SESSION['inputIkarusCoins'] = $amount;
-            $return = array( "true" => "ergebnis", $result => "result");
-            $return = array_flip($return);
+
+            $cards = [];
+            
+            array_push($cards, $logic->getCard($cards));
+            array_push($cards, $logic->getCard($cards));
+            array_push($cards, $logic->getCard($cards));
+            array_push($cards, $logic->getCard($cards));
+
+            $dealerCards = [
+                $cards[0],
+                $cards[1],
+            ];
+
+            $myCards = [
+                $cards[2],
+                $cards[3],
+            ];
+            
+            $return = array( "ergebnis" => "true", "result" => $result, "dealerCards" => $dealerCards, "myCards" => $myCards);
 
         }else{
 
-            $return = array("false" => "ergebnis");
-            $return = array_flip($return);
+            $return = array("ergebnis" => "false");
 
         }
         

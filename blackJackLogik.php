@@ -2,6 +2,7 @@
 
 class BlackJackGame{
 
+
     function setAmount($amount, $bankAmount, $username){
         include("dbconnector.inc.php");
 
@@ -47,7 +48,8 @@ class BlackJackGame{
     }
 
     function getCard($takenCards){
-        $cardValue = array{
+        
+        $cardValueArray = [
             "2",
             "3",
             "4",
@@ -61,22 +63,40 @@ class BlackJackGame{
             "Königin",
             "König",
             "Ass",
-        };
-
-        $cardArt = array{
+        ];
+    
+        $cardArtArray = [
             "herz",
             "ecke",
             "kreuz",
             "schufle",
-        };
-
+        ];
         
+        do{
+            $goOn = FALSE;
+
+            $cardValueArray = array_values($cardValueArray);
+            $cardArtArray = array_values($cardArtArray);
+
+            $cardValue = rand(0, 12);
+            $cardArt = rand(0, 3);
+
+            $card = $cardArtArray[$cardArt] . $cardValueArray[$cardValue];
+            if(sizeof($takenCards) !== 0){
+                for($i = 0; $i < sizeof($takenCards); $i++){
+                    if(strcmp($takenCards[$i], $card) == 0){
+                        $goOn = TRUE;
+                    }
+                }
+            }
+        }while($goOn);
+
+        return $card;
     }
 /*
     function getMyCard(){
         
-        $MyCardValue = rand(2, 14);
-        $MyCardArt = rand(1, 4);
+        
 
         switch ($MyCardArt) {
             case 1:
