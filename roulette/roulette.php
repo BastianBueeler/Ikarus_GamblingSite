@@ -42,7 +42,7 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="roulette.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
     <title>Roulette</title>
   </head>
@@ -55,28 +55,35 @@
         <div class="rouletteContent">
             
             <div class="playField d-flex flex-column">
-                
+            <p class="text-black mb-0" id="setAmountText">Ihr Einsatz</p>
+            <input id="setAmountField" type="number" min="0" max="999999999999999999999">
+            <br/>
             </div>
 
             <div class="playMenu pl-5 pr-5 pt-5 bg-secondary lead">
                 <p class="text-white">Sie besitzen</p>
+                <br/>
 
-                <p class="text-white mb-0">Definierte Zahl</p>
+                <p class="text-white mb-0">Setze auf Zahl</p>
                 <input class="w-100" id="definednumber" type="number" min="0" max="60">
                 <br/>
-                <button class="btn btn-dark mt-2 w-100" id="setIkarusCoins">setzen</button>
+                <br/>
                 <br/>
 
-                <button class="btn btn-dark mt-4 w-100" id="takeCard">Karte ziehen</button>
+                <form class="text-white mb-0"action="">
+                    <p>Wähle eine Farbe</p>
+                    <input type="radio" name="color" value="red"> Rot<br>
+                    <input type="radio" name="color" value="black"> Schwarz<br>
+                    <input type="radio" name="color" value="green"> Grün<br>
+                </form>
                 <br/>
 
-                <button class="btn btn-dark mt-4 w-100" id="split">Split</button>
-                <br/>
-
-                <button class="btn btn-dark mt-4 w-100" id="doubleDown">Double Down</button>
-                <br/>
-
+                <button class="btn btn-dark mt-4 w-100" id="spinWheel">Jetzt spielen</button>
             </div>
+
+            
+
+            
 
         </div>
 

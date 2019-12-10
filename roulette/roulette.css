@@ -1,0 +1,53 @@
+/*general*/
+html, body{
+    background-color: #EDEDED;
+    margin: 0;
+    height: 100%;
+    margin-top: 0px;
+}
+
+.header{
+    font-size: 25px;
+    height: 100px;
+}
+
+body{
+    background-color: #EDEDED;
+}
+
+/*Roulette Content*/
+
+.rouletteContent{
+    width: 100%;
+    height: calc(100% - 100px);
+}
+
+.playField{
+    height: 100%;
+    width: 80%;
+    margin: 0;
+    float: left;
+}
+
+.playMenu{
+    height: 100%;
+    width: 20%;
+    margin: 0;
+    float: right;
+}
+
+#setAmountText{
+    font-size: 30px;
+    position: relative;
+    left: 70%;
+    bottom: -80%;
+}
+
+#setAmountField{
+    width: 250px;
+    height: 30px;
+    position: relative;
+    left: 70%;
+    bottom: -80%;
+}
+/*Spin Wheel*/
