@@ -1,5 +1,6 @@
 var setIkarusCoinsBtn = document.getElementById("setIkarusCoins");
 var takeCardBtn = document.getElementById("takeCard");
+var takeNoCardBtn = document.getElementById("takeNoCards");
 var splitBtn = document.getElementById("split");
 var doubleDownBtn = document.getElementById("doubleDown");
 
@@ -44,11 +45,16 @@ setIkarusCoinsBtn.addEventListener("click", function(){
                         alert("Sie haben nicht genügend Geld");
                     }else if(data[0].ergebnis == "true"){
                         myFortune.innerHTML = 'Sie besitzen ' + data[0].result + ' IkarusCoins';
-                        myBet.innerHTML = 'Ihr Einsatz: ' + inputIkarusCoins;
+                        myBet.innerHTML = 'Ihr Einsatz: ' + inputIkarusCoins;   
                         setCard("dealer", data[0].dealerCards[0]);
                         setCard("dealer", data[0].dealerCards[1]);
                         setCard("person", data[0].myCards[0]);
                         setCard("person", data[0].myCards[1]);
+                        if(data[0].won == "dealer"){
+                            alert("dealer hat gewonnen")
+                        }else if(data[0].won == "my"){
+                            alert("Sie haben gewonnen");
+                        }
                     }
                 }
             }
@@ -61,14 +67,36 @@ setIkarusCoinsBtn.addEventListener("click", function(){
 
 
 takeCardBtn.addEventListener("click", function(){
+    if(myBet.innerHTML != ''){
 
-    request.onload = function() {
-        if(request.readyState == 4 && request.status == 200) {
-            alert(request.responseText);
+        var request = new XMLHttpRequest();
+        var url = 'ajaxCallHandler.php';
+        request.open('POST', url, true);
+        request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        var params = "function=takeCard";
+
+        request.onload = function() {
+            if(request.readyState == 4 && request.status == 200) {
+                var data = JSON.parse(request.responseText);
+                console.log(data);
+                setCard("person", data[0].card);
+                if(data[0].outcome == "over"){
+                    setTimeout(function(){
+                        alert("Sie haben verloren, über 21")
+                    }, 2000);
+                }else if(data[0].outcome == "won"){
+                    setTimeout(function(){
+                        alert("Sie habe gewonnen, 21");
+                    }, 2000);
+                }
+            }
         }
-    }
 
-    request.send(params);
+        request.send(params);
+    }
+});
+
+takeNoCardBtn.addEventListener("click", function(){
 
 });
 
@@ -109,4 +137,8 @@ function setCard(person, card){
     }else if(person == "person") {
         myCardPlace.insertAdjacentHTML('beforeend', htmlString);
     }    
+}
+
+function playDealer(){
+
 }

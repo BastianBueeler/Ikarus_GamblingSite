@@ -28,8 +28,6 @@ class BlackJackGame{
     function getBankAmount($username){
 
         include("dbconnector.inc.php");
-
-        $bankAmount = 'test';
         
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
@@ -47,7 +45,7 @@ class BlackJackGame{
         return $bankAmount;
     }
 
-    function getCard($takenCards){
+    function getCard($takenCards, $cardsAmount){
         
         $cardValueArray = [
             "2",
@@ -91,133 +89,39 @@ class BlackJackGame{
             }
         }while($goOn);
 
-        return $card;
-    }
-/*
-    function getMyCard(){
-        
-        
-
-        switch ($MyCardArt) {
-            case 1:
-                $card = $MyCardValue . "H";
-                array_push($MyCards, $card);
-                break;
-            
-            case 2:
-                $card = $MyCardValue . "D";
-                array_push($MyCards, $card);
-                break;
-                
-            case 3:
-                $card = $MyCardValue . "S";
-                array_push($MyCards, $card);
-                break;
-                
-            case 4:
-                $card = $MyCardValue . "C";
-                array_push($MyCards, $card);
-                break;
-
-            default:
-                # code...
-                break;
-
-            if($MyCardValue >= 10 && $MyCardValue < 14){ 
-                
-                $MyCardAmount += 10;
-
-            }elseif($MyCardValue < 10){
-                
-                $MyCardAmount += $MyCardValue;
-                
-            }elseif
+        if($cardValue > 7 && $cardValue < 12){
+            $cardsAmount += 10;
+        }elseif($cardValue == 12){
+            $cardsAmount += 11;
+            if($cardsAmount > 21){
+                $cardsAmount -= 11;
+                $cardsAmount += 1;
+            }
+        }else{
+            $cardsAmount += $cardValue + 2;
         }
 
-    }
-
-    function getDealerCard(){
-        $MyCardValue = rand(2, 14);
-        $MyCardArt = rand(1, 4);
-
-        switch ($MyCardArt) {
-            case 1:
-                $card = $MyCardValue . "H";
-                array_push($MyCards, $card);
-                break;
-            
-            case 2:
-                $card = $MyCardValue . "D";
-                array_push($MyCards, $card);
-                break;
-                
-            case 3:
-                $card = $MyCardValue . "S";
-                array_push($MyCards, $card);
-                break;
-                
-            case 4:
-                $card = $MyCardValue . "C";
-                array_push($MyCards, $card);
-                break;
-
-            default:
-                # code...
-                break;
+        if($cardsAmount > 21){
+            $return = [
+                $card,
+                "over",
+            ];
+        }else{
+            $return = [
+                $card,
+                $cardsAmount,
+            ];
         }
+
+        return $return;
     }
-
-    function win($multiplier){
-        $winAmount = $inset * $multiplier;
-        $insertIkarusCoins = $winAmount + $bankAmount;
-
-        $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = $insertIkarusCoins WHERE username=?");
-
-        $stmt->bind_param("s", $username);
-
-        $stmt->execute();
-
-    }
-
-    function loos(){
-        $insertIkarusCoins = $bankAmount - $inset;
-
-        $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = $insertIkarusCoins WHERE username=?");
-
-        $stmt->bind_param("s", $username);
-
-        $stmt->execute();
-    }
+/*   
 
     function doubleDown(){
 
     }
 
     function split(){
-
-    }
-
-    function compareCardeValuesWith21($player){
-        if(strcmp($player, "user")){
-
-            
-
-        }elseif(strcmp($player, "dealer")){
-
-
-
-        }
-    }
-
-    function closeDBconnection(){
-        
-        if(empty($stmt)){
-
-        }else{
-            $stmt->close();
-        }
-
-        $mysqli->close();
 
     }
 */
