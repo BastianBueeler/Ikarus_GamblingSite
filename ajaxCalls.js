@@ -10,6 +10,8 @@ var dealerCardPlace = document.getElementById("dealerCards");
 var myFortune = document.getElementById("fortune");
 var myBet = document.getElementById("bet");
 
+var promiseDealerTakeCard;
+
 var request = new XMLHttpRequest();
 var url = 'ajaxCallHandler.php';
 request.open('POST', url, true);
@@ -67,13 +69,14 @@ setIkarusCoinsBtn.addEventListener("click", function(){
 
 
 takeCardBtn.addEventListener("click", function(){
+    
     if(myBet.innerHTML != ''){
 
         var request = new XMLHttpRequest();
         var url = 'ajaxCallHandler.php';
         request.open('POST', url, true);
         request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        var params = "function=takeCard";
+        var params = "function=takeCard&person=player";
 
         request.onload = function() {
             if(request.readyState == 4 && request.status == 200) {
@@ -88,17 +91,36 @@ takeCardBtn.addEventListener("click", function(){
                     setTimeout(function(){
                         alert("Sie habe gewonnen, 21");
                     }, 2000);
+                }else{
+                    playDealer();
                 }
             }
         }
 
         request.send(params);
     }
+    
 });
 
 takeNoCardBtn.addEventListener("click", function(){
-
+    takeCardBtn.disabled = "disabled";
+    takesDealerCard();
 });
+
+function takesDealerCard(){
+    playDealer();
+    
+    setTimeout(function(){
+        promiseDealerTakeCard
+            .then(function (fulfilled){
+                takesDealerCard();
+            })
+            .catch(function (error){
+
+            });
+    }, 2000);
+}
+
 
 splitBtn.addEventListener("click", function(){
 
@@ -140,5 +162,48 @@ function setCard(person, card){
 }
 
 function playDealer(){
+    var takeCardAgain;
+    var request = new XMLHttpRequest();
+    var url = 'ajaxCallHandler.php';
+    request.open('POST', url, true);
+    request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    var params = "function=takeCard&person=dealer";
 
+    request.onload = function(){
+        if(request.readyState == 4 && request.status == 200){
+            var data = JSON.parse(request.responseText);
+            if(data[0].outcome == "cant"){
+                takeCardAgain = false;
+            }else{
+                setCard("dealer", data[0].card);
+                if(data[0].outcome == "over"){
+                    setTimeout(function(){
+                        alert("deler ist über 21");
+                    }, 2000);
+                    takeCardAgain = false;
+                }else if(data[0].outcome == "won"){
+                    setTimeout(function(){
+                        alert("dealer hat gewonnen");
+                    }, 2000);
+                    takeCardAgain = false;
+                }else{
+                    takeCardAgain = true;
+                }
+            }
+        }
+    }
+
+    request.send(params);
+
+    setTimeout(function(){
+        promiseDealerTakeCard = new Promise(
+            function (resolve, reject) {
+                if(takeCardAgain){
+                    resolve("again");
+                }else{
+                    reject(new Error("cant"));
+                }
+            }
+        );
+    }, 2000);
 }

@@ -88,28 +88,41 @@ if(isset($_POST['function'])){
         session_regenerate_id(true);
 
         $cards = $_SESSION['takenCards'];
-        $myAmount = $_SESSION['myCardsAmount'];
-
-        $getCardReturn = $logic->getCard($cards, $myAmount);
-
-        $card = $getCardReturn[0];
-        $result = $getCardReturn[1];
-
-        if($result == "over"){
-            $outcome = "over";
-        }elseif($result == 21){
-            $outcome = "won";
-        }else{
-            $outcome = $result;
+        if($_POST['person'] == 'player'){
+            $amount = $_SESSION['myCardsAmount'];
+        }elseif($_POST['person'] == 'dealer'){
+            $amount = $_SESSION['dealerCardsAmount'];
         }
 
-        array_push($cards, $card);
-        $_SESSION['takenCards'] = $cards;
+        if($_POST['person'] == 'dealer' && $amount < 17 || $_POST['person'] == 'player'){
+            
+            $getCardReturn = $logic->getCard($cards, $amount);
 
-        $_SESSION['myCardsAmount'] = $result;
+            $card = $getCardReturn[0];
+            $result = $getCardReturn[1];
 
-        $return = array("card" => $card, "outcome" => $outcome);
+            if($result == "over"){
+                $outcome = "over";
+            }elseif($result == 21){
+                $outcome = "won";
+            }else{
+                $outcome = $result;
+            }
 
+            array_push($cards, $card);
+            $_SESSION['takenCards'] = $cards;
+
+            if($_POST['person'] == 'player'){
+                $_SESSION['myCardsAmount'] = $result;
+            }elseif($_POST['person'] == 'dealer'){
+                $_SESSION['dealerCardsAmount'] = $result;
+            }
+
+            $return = array("card" => $card, "outcome" => $outcome);
+
+        }else{
+            $return = array("outcome" => 'cant');
+        }
         $arr = array($return);
 
         $json = json_encode($arr);
