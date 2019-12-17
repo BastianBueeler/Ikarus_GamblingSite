@@ -44,6 +44,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="roulette.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+    <script src='winwheelLibrary/Winwheel.js'></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <title>Roulette</title>
   </head>
   <body>
@@ -55,9 +57,109 @@
         <div class="rouletteContent">
             
             <div class="playField d-flex flex-column">
-            <p class="text-black mb-0" id="setAmountText">Ihr Einsatz</p>
-            <input id="setAmountField" type="number" min="0" max="999999999999999999999">
-            <br/>
+                <div class="rouletteWheelBody d-flex flex-column">
+                    <canvas id='canvas'  width='880' height='300'>
+                        Canvas not supported, use another browser.
+                    </canvas>
+                    <script>
+                        let theWheel = new Winwheel({
+                            'canvasId'    : 'canvas',
+                            'numSegments' : 21,
+                            'textAlignment'  : 'outer',
+                            'innerRadius'   : 90,
+                            'segments'    :
+                            [
+                                {'fillStyle' : 'green', 'text' : '0'},
+                                {'fillStyle' : 'black', 'text' : '1'},
+                                {'fillStyle' : 'red', 'text' : '2'},
+                                {'fillStyle' : 'black', 'text' : '3'},
+                                {'fillStyle' : 'red', 'text' : '4'},
+                                {'fillStyle' : 'black', 'text' : '5'},
+                                {'fillStyle' : 'red', 'text' : '6'},
+                                {'fillStyle' : 'black', 'text' : '7'},
+                                {'fillStyle' : 'red', 'text' : '8'},
+                                {'fillStyle' : 'black', 'text' : '9'},
+                                {'fillStyle' : 'red', 'text' : '10'},
+                                {'fillStyle' : 'black', 'text' : '11'},
+                                {'fillStyle' : 'red', 'text' : '12'},
+                                {'fillStyle' : 'black', 'text' : '13'},
+                                {'fillStyle' : 'red', 'text' : '14'},
+                                {'fillStyle' : 'black', 'text' : '15'},
+                                {'fillStyle' : 'red', 'text' : '16'},
+                                {'fillStyle' : 'black', 'text' : '17'},
+                                {'fillStyle' : 'red', 'text' : '18'},
+                                {'fillStyle' : 'black', 'text' : '19'},
+                                {'fillStyle' : 'red', 'text' : '20'}
+                            ],
+                            'lineWidth'   : 1,
+                            'textOrientation' : 'curved',
+                            'animation' :                   
+                            {
+                                'type'     : 'spinToStop',  
+                                'duration' : 5,             
+                                'spins'    : 8,
+                                'callbackFinished' : 'alertPrize()',
+                                'callbackAfter' : 'drawTriangle()'      
+                            },
+                            'pointerAngle' : 0,
+                        });
+
+                
+
+                    theWheel.segments[1].textFillStyle = 'white';
+                    theWheel.segments[2].textFillStyle = 'white';
+                    theWheel.segments[3].textFillStyle = 'white';
+                    theWheel.segments[4].textFillStyle = 'white';
+                    theWheel.segments[5].textFillStyle = 'white';
+                    theWheel.segments[6].textFillStyle = 'white';
+                    theWheel.segments[7].textFillStyle = 'white';
+                    theWheel.segments[8].textFillStyle = 'white';
+                    theWheel.segments[9].textFillStyle = 'white';
+                    theWheel.segments[10].textFillStyle = 'white';
+                    theWheel.segments[11].textFillStyle = 'white';
+                    theWheel.segments[12].textFillStyle = 'white';
+                    theWheel.segments[13].textFillStyle = 'white';
+                    theWheel.segments[14].textFillStyle = 'white';
+                    theWheel.segments[15].textFillStyle = 'white';
+                    theWheel.segments[16].textFillStyle = 'white';
+                    theWheel.segments[17].textFillStyle = 'white';
+                    theWheel.segments[18].textFillStyle = 'white';
+                    theWheel.segments[19].textFillStyle = 'white';
+                    theWheel.segments[20].textFillStyle = 'white';
+                    theWheel.segments[21].textFillStyle = 'white';
+                    theWheel.draw();
+                    drawTriangle();
+
+                    function alertPrize()
+                    {
+                        let winningSegment = theWheel.getIndicatedSegment();
+                        alert("Deine Zahl: " + winningSegment.text + "!");
+                    }
+                
+                    
+                
+                    function drawTriangle()
+                    {
+                        let ctx = theWheel.ctx;
+                
+                        ctx.strokeStyle = 'navy';     // Set line colour.
+                        ctx.fillStyle   = 'yellow';     // Set fill colour.
+                        ctx.lineWidth   = 2;
+                        ctx.beginPath();              // Begin path.
+                        ctx.moveTo(410, -10);           // Move to initial position.
+                        ctx.lineTo(470, -10);           // Draw lines to make the shape.
+                        ctx.lineTo(440, 11);
+                        ctx.lineTo(411, -10);
+                        ctx.stroke();                 // Complete the path by stroking (draw lines).
+                        ctx.fill();                   // Then fill.
+                    }
+                    </script>    
+                </div>
+                <p class="text-black mb-0" id="setAmountText">Ihr Einsatz</p>
+                <input id="setAmountField" type="number" min="0" max="999999999999999999999">
+                <br/>
+
+                
             </div>
 
             <div class="playMenu pl-5 pr-5 pt-5 bg-secondary lead">
@@ -78,7 +180,7 @@
                 </form>
                 <br/>
 
-                <button class="btn btn-dark mt-4 w-100" id="spinWheel">Jetzt spielen</button>
+                <button onClick="theWheel.startAnimation();" class="btn btn-dark mt-4 w-100" id="spinWheel">Jetzt spielen</button>
             </div>
 
             
