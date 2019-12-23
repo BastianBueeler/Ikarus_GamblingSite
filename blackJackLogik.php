@@ -8,6 +8,8 @@ class BlackJackGame{
 
         $amount = strval($amount);
 
+        $betPremission = [];
+
         if($amount <= $bankAmount){
 
             $newBankAmount = $bankAmount - $amount;
@@ -17,11 +19,17 @@ class BlackJackGame{
             $stmt->bind_param("is", $newBankAmount, $username);
 
             $stmt->execute();
-            
-            return $newBankAmount;
+
+            $betPremission['premission'] = true;
+            $betPremission['newBankAmount'] = $newBankAmount;
+
         }else{
-            return '';
+
+            $betPremission['premission'] = false;
+
         }
+
+        return $betPremission;
 
     }
 
@@ -30,6 +38,7 @@ class BlackJackGame{
         include("dbconnector.inc.php");
         
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
+        
         $stmt->bind_param("s", $username);
 
         $stmt->execute();
@@ -45,9 +54,9 @@ class BlackJackGame{
         return $bankAmount;
     }
 
-    function getCard($takenCards, $cardsAmount){
+    function getCard($takenCards, $cardsWorth){
         
-        $cardValueArray = [
+        $cardsValuesArray = [
             "2",
             "3",
             "4",
@@ -63,7 +72,7 @@ class BlackJackGame{
             "Ass",
         ];
     
-        $cardArtArray = [
+        $cardsSymbolsArray = [
             "herz",
             "ecke",
             "kreuz",
@@ -73,57 +82,81 @@ class BlackJackGame{
         do{
             $goOn = FALSE;
 
-            $cardValueArray = array_values($cardValueArray);
-            $cardArtArray = array_values($cardArtArray);
+            $randCardValue = rand(0, 12);
+            $randCardArt = rand(0, 3);
 
-            $cardValue = rand(0, 12);
-            $cardArt = rand(0, 3);
-
-            $card = $cardArtArray[$cardArt] . $cardValueArray[$cardValue];
+            $card = $cardsSymbolsArray[$randCardArt] . $cardsValuesArray[$randCardValue];
             if(sizeof($takenCards) !== 0){
                 for($i = 0; $i < sizeof($takenCards); $i++){
-                    if(strcmp($takenCards[$i], $card) == 0){
-                        $goOn = TRUE;
+                    if($takenCards[$i] == $card){
+                        $goOn = true;
                     }
                 }
             }
         }while($goOn);
 
-        if($cardValue > 7 && $cardValue < 12){
-            $cardsAmount += 10;
-        }elseif($cardValue == 12){
-            $cardsAmount += 11;
-            if($cardsAmount > 21){
-                $cardsAmount -= 11;
-                $cardsAmount += 1;
+        if($randCardValue > 7 && $randCardValue < 12){
+            $cardsWorth += 10;
+        }elseif($randCardValue == 12){
+            $cardsWorth += 11;
+            if($cardsWorth > 21){
+                $cardsWorth -= 11;
+                $cardsWorth += 1;
             }
         }else{
-            $cardsAmount += $cardValue + 2;
+            $cardsWorth += $randCardValue + 2;
         }
 
-        if($cardsAmount > 21){
-            $return = [
-                $card,
-                "over",
-            ];
-        }else{
-            $return = [
-                $card,
-                $cardsAmount,
-            ];
-        }
+        $currentStatusOfCards = [
+            "card"       => $card,
+            "cardsWorth" => $cardsWorth,
+        ];
+
+        return $currentStatusOfCards;
+    }
+
+    function multiplyBet($multiplier, $bet, $bankAmount, $username){
+
+        include("dbconnector.inc.php");
+
+        $betMultiplyed = bcmul($multiplier, $bet);
+
+        $newBankAmount = $betMultiplyed + $bankAmount;
+
+        $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
+
+        $stmt->bind_param("is", $newBankAmount, $username);
+
+        $stmt->execute();
+
+        $return = [
+            "newBankAmount" => $newBankAmount,
+            "moneyGetBack" => $betMultiplyed,
+        ];
+            
+        return $return;
+
+    }
+
+    function getBetBack($bet, $bankAmount, $username){
+
+        include("dbconnector.inc.php");
+
+        $newBankAmount = $bet + $bankAmount;
+
+        $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
+
+        $stmt->bind_param("is", $newBankAmount, $username);
+
+        $stmt->execute();
+
+        $return = [
+            "newBankAmount" => $newBankAmount,
+            "moneyGetBack" => $bet,
+        ];
 
         return $return;
-    }
-/*   
-
-    function doubleDown(){
 
     }
-
-    function split(){
-
-    }
-*/
 }
 ?>

@@ -1,4 +1,3 @@
-
 html, body{
     background-color: #EDEDED;
     margin: 0;
@@ -82,7 +81,7 @@ body{
 
 /*Black Jack*/
 
-.blackJackContent{
+#blackJackContent {
     width: 100%;
     height: calc(100% - 100px);
 }

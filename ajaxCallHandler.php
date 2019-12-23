@@ -15,62 +15,60 @@ if(isset($_POST['function'])){
         $username = $_SESSION['username'];
         $amount = $_POST['value'];
 
-        $result = $logic->setAmount($amount, $bankAmount, $username); 
+        $betPremission = $logic->setAmount($amount, $bankAmount, $username); 
 
-        if($result != ''){
+        if($betPremission['premission']){
 
             $_SESSION['inputIkarusCoins'] = $amount;
 
             $cards = [];
             
-            $getCardReturn = $logic->getCard($cards, 0);
-            array_push($cards, $getCardReturn[0]);
+            $currentStatusOfCards = $logic->getCard($cards, 0);
+            array_push($cards, $currentStatusOfCards['card']);
 
-            $cardAmountDealer = $getCardReturn[1];
+            $cardsWorthDealer = $currentStatusOfCards['cardsWorth'];
 
-            $getCardReturn = $logic->getCard($cards, $cardAmountDealer);
-            array_push($cards, $getCardReturn[0]);
+            $currentStatusOfCards = $logic->getCard($cards, $cardsWorthDealer);
+            array_push($cards, $currentStatusOfCards['card']);
 
-            $_SESSION['dealerCardsAmount'] = $getCardReturn[1];
+            $_SESSION['dealerCardsWorth'] = $currentStatusOfCards['cardsWorth'];
 
-            $getCardReturn = $logic->getCard($cards, 0);
-            array_push($cards, $getCardReturn[0]);
+            $currentStatusOfCards = $logic->getCard($cards, 0);
+            array_push($cards, $currentStatusOfCards['card']);
 
-            $myCardAmount = $getCardReturn[1];
+            $cardsWorthPlayer = $currentStatusOfCards['cardsWorth'];
 
-            $getCardReturn = $logic->getCard($cards, $myCardAmount);
-            array_push($cards, $getCardReturn[0]);
+            $currentStatusOfCards = $logic->getCard($cards, $cardsWorthPlayer);
+            array_push($cards, $currentStatusOfCards['card']);
 
-            $_SESSION['myCardsAmount'] = $getCardReturn[1];
+            $_SESSION['playerCardsWorth'] = $currentStatusOfCards['cardsWorth'];
 
             $dealerCards = [
                 $cards[0],
                 $cards[1],
             ];
 
-            $myCards = [
+            $playerCards = [
                 $cards[2],
                 $cards[3],
             ];
             
             $_SESSION['takenCards'] = $cards;
             
-            $myAmount = $_SESSION['myCardsAmount'];
-            $dealerAmount = $_SESSION['dealerCardsAmount'];
+            $playerAmount = $_SESSION['playerCardsWorth'];
+            $dealerAmount = $_SESSION['dealerCardsWorth'];
 
-            if($myAmount == 21){
-                $won = "my";
-            }elseif($dealerAmount == 21){
-                   $won = "dealer";
+            if($playerAmount == 21 || $dealerAmount == 21){
+                $winner = true;
             }else{
-                $won = "none";
+                $winner = false;
             }
 
-            $return = array( "ergebnis" => "true", "result" => $result, "dealerCards" => $dealerCards, "myCards" => $myCards, "won" => $won);
+            $return = array( "premission" => $betPremission['premission'], "newBankAmount" => $betPremission['newBankAmount'], "dealerCards" => $dealerCards, "playerCards" => $playerCards, "winner" => $winner);
 
         }else{
 
-            $return = array("ergebnis" => "false");
+            $return = array("premission" => $betPremission['premission']);
 
         }
         
@@ -89,49 +87,51 @@ if(isset($_POST['function'])){
 
         $cards = $_SESSION['takenCards'];
         if($_POST['person'] == 'player'){
-            $amount = $_SESSION['myCardsAmount'];
+            $amount = $_SESSION['playerCardsWorth'];
         }elseif($_POST['person'] == 'dealer'){
-            $amount = $_SESSION['dealerCardsAmount'];
+            $amount = $_SESSION['dealerCardsWorth'];
         }
 
         if($_POST['person'] == 'dealer' && $amount < 17 || $_POST['person'] == 'player'){
-            
-            $getCardReturn = $logic->getCard($cards, $amount);
 
-            $card = $getCardReturn[0];
-            $result = $getCardReturn[1];
+            $currentStatusOfCards = $logic->getCard($cards, $amount);
 
-            if($result == "over"){
-                $outcome = "over";
-            }elseif($result == 21){
-                $outcome = "won";
+            $card = $currentStatusOfCards['card'];
+            $cardsWorth = $currentStatusOfCards['cardsWorth'];
+
+            if($cardsWorth > 21){
+                $loser = true;
+                $winner = false;
+            }elseif($cardsWorth == 21){
+                $winner = true;
+                $loser = false;
             }else{
-                $outcome = $result;
+                $winner = false;
+                $loser = false;
             }
 
             array_push($cards, $card);
             $_SESSION['takenCards'] = $cards;
 
             if($_POST['person'] == 'player'){
-                $_SESSION['myCardsAmount'] = $result;
+                $_SESSION['playerCardsWorth'] = $cardsWorth;
             }elseif($_POST['person'] == 'dealer'){
-                $_SESSION['dealerCardsAmount'] = $result;
+                $_SESSION['dealerCardsWorth'] = $cardsWorth;
             }
 
-            $return = array("card" => $card, "outcome" => $outcome);
+            $return = array("card" => $card, "canDealerTakeCard" => true, "winner" => $winner, "loser" => $loser);
 
         }else{
-            $return = array("outcome" => 'cant');
+
+            $return = array("canDealerTakeCard" => false);
+
         }
+        
         $arr = array($return);
 
         $json = json_encode($arr);
 
         echo $json;
-
-    }elseif($_POST['function'] === 'split'){
-
-    }elseif($_POST['function'] === 'doubleDown'){
 
     }elseif($_POST['function'] === 'getBankAmount'){
 
@@ -147,6 +147,110 @@ if(isset($_POST['function'])){
         $_SESSION['bankAmount'] = $bankAmount;
 
         echo $bankAmount;
+
+    }elseif($_POST['function'] === 'whoWon'){
+        
+        session_start();
+        session_regenerate_id(true);
+
+        if($_SESSION['dealerCardsWorth'] > 21){
+            echo 'playerWon';
+        }elseif($_SESSION['playerCardsWorth'] > 21){
+            echo 'dealerWon';
+        }elseif($_SESSION['playerCardsWorth'] > $_SESSION['dealerCardsWorth']){
+            echo 'playerWon';
+        }elseif($_SESSION['playerCardsWorth'] < $_SESSION['dealerCardsWorth']){
+            echo 'dealerWon';
+        }else{
+            echo 'draw';
+        }
+
+    }elseif($_POST['function'] === 'multiply'){
+
+        session_start();
+        session_regenerate_id(true);
+
+        $logic = new BlackJackGame;
+
+        $bet = $_SESSION['inputIkarusCoins'];
+        $bankAmount = $_SESSION['bankAmount'];
+        $username = $_SESSION['username'];
+
+        if($_SESSION['playerCardsWorth'] == 21){
+
+            $bankStatement = $logic->multiplyBet(2.5, $bet, $bankAmount, $username);
+
+        }else{
+
+            $bankStatement = $logic->multiplyBet(2, $bet, $bankAmount, $username);
+
+        }
+
+        $_SESSION['bankAmount'] = $bankStatement['newBankAmount'];
+        $_SESSION['moneyGetBack'] = $bankStatement['moneyGetBack'];
+        
+        echo $bankStatement['newBankAmount'];
+
+    }elseif($_POST['function'] == 'getBetBack'){
+
+        session_start();
+        session_regenerate_id(true);
+
+        $logic = new BlackJackGame();
+
+        $bet = $_SESSION['inputIkarusCoins'];
+        $bankAmount = $_SESSION['bankAmount'];
+        $username = $_SESSION['username'];
+
+        $bankStatement = $logic->getBetBack($bet, $bankAmount, $username);
+
+        $_SESSION['bankAmount'] = $bankStatement['newBankAmount'];
+        $_SESSION['moneyGetBack'] = $bankStatement['moneyGetBack'];
+
+        echo $bankStatement['newBankAmount'];
+
+    }elseif($_POST['function'] == 'getEndOfGameInfo'){
+        
+        session_start();
+        session_regenerate_id(true);
+
+        if($_POST['winner'] == 'dealer'){
+
+            $return = [
+                'dealerCardsWorth' => $_SESSION['dealerCardsWorth'],
+                'playerCardsWorth' => $_SESSION['playerCardsWorth'],
+                'bankAmount'       => $_SESSION['bankAmount'],
+                'betInput'         => $_SESSION['inputIkarusCoins'],
+                'moneyGetBack'     => 0,
+            ];
+
+        }elseif($_POST['winner'] == 'player'){
+
+            $return = [
+                'dealerCardsWorth' => $_SESSION['dealerCardsWorth'],
+                'playerCardsWorth' => $_SESSION['playerCardsWorth'],
+                'bankAmount'       => $_SESSION['bankAmount'],
+                'betInput'         => $_SESSION['inputIkarusCoins'],
+                'moneyGetBack'     => $_SESSION['moneyGetBack'],
+            ];
+
+        }elseif($_POST['draw'] == 'draw'){
+
+            $return =[
+                'dealerCardsWorth' => $_SESSION['dealerCardsWorth'],
+                'playerCardsWorth' => $_SESSION['playerCardsWorth'],
+                'bankAmount'       => $_SESSION['bankAmount'],
+                'betInput'         => $_SESSION['inputIkarusCoins'],
+                'moneyGetBack'     => $_SESSION['moneyGetBack'],
+            ];
+
+        }
+
+        $arr = array($return);
+
+        $json = json_encode($arr);
+
+        echo $json;
     }
 
 }
