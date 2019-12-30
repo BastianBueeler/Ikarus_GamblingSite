@@ -9,6 +9,8 @@
 
         $username = $_SESSION['username'];
 
+        include('../setNewCoins.php');
+
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 
@@ -34,6 +36,7 @@
         $message = '';
 
         if (!empty($_POST)) {
+
             if(isset($_POST['color'])){
                  $color = $_POST['color'];
             } else{
@@ -71,42 +74,51 @@
                 //$stmt2->close();
                 //$mysqli->close();
 
-                $resultWheelNumber = $_COOKIE["winningNumber"];
-                $winningAmount = 0;
-
-                if ($color !== null && $definedNumber == null && $setAmountField !== null){
-
-                    if($resultWheelNumber == 0 && $color == "Grün"){
-                        $winningAmount = $setAmountField * 14;
-                        echo "Du hast grün getroffen!";
-                        
-                    } elseif($resultWheelNumber % 2 == 0 && $color == "Rot"){
-                        $winningAmount = $setAmountField * 2;
-                        echo "Du hast rot getroffen!";
-
-                    } elseif($resultWheelNumber % 2 != 0 && $color == "Schwarz"){
-                        $winningAmount = $setAmountField * 2;
-                        echo "Du hast schwarz getroffen!";
-                    } else {
+                print_r($_POST);
+                //if(isset($_COOKIE["finishedAnimation"])){
+                   // if($_COOKIE["finishedAnimation"] == 1){
+                if(isset($_POST["textWinningSegment"])){
+                    if($_POST["textWinningSegment"] != NULL){
+                        setcookie("finishedAnimation", 0);
+                        //$resultWheelNumber = $_COOKIE["winningNumber"];
+                        $resultWheelNumber = $_POST["textWinningSegment"];
                         $winningAmount = 0;
-                        echo "Leider verloren";
-                    }
-                    
-                    echo "farbe--->";
-                    echo $resultWheelNumber;
-                    
-                } elseif ($color == null && $definedNumber !== null && $setAmountField !== null){
 
-                    if($resultWheelNumber == $definedNumber){
-                        $winningAmount = $setAmountField * 14;
-                        echo "Du hast die richtige Zahl getroffen!";
-                    } else {
-                        $winningAmount = 0;
-                        echo "Leider verloren";
+                        if ($color !== null && $definedNumber == null && $setAmountField !== null){
+
+                            if($resultWheelNumber == 0 && $color == "Grün"){
+                                $winningAmount = $setAmountField * 14;
+                                echo "Du hast grün getroffen!";
+                                
+                            } elseif($resultWheelNumber % 2 == 0 && $color == "Rot"){
+                                $winningAmount = $setAmountField * 2;
+                                echo "Du hast rot getroffen!";
+
+                            } elseif($resultWheelNumber % 2 != 0 && $color == "Schwarz"){
+                                $winningAmount = $setAmountField * 2;
+                                echo "Du hast schwarz getroffen!";
+                            } else {
+                                $winningAmount = 0;
+                                echo "Leider verloren";
+                            }
+                            
+                            echo "farbe--->";
+                            echo $resultWheelNumber;
+                            
+                        } elseif ($color == null && $definedNumber !== null && $setAmountField !== null){
+
+                            if($resultWheelNumber == $definedNumber){
+                                $winningAmount = $setAmountField * 14;
+                                echo "Du hast die richtige Zahl getroffen!";
+                            } else {
+                                $winningAmount = 0;
+                                echo "Leider verloren";
+                            }
+                            
+                        } else {
+                            echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben";
+                        }
                     }
-                    
-                } else {
-                    echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben";
                 }
             }
         } 
@@ -121,6 +133,7 @@
     <link rel="stylesheet" type="text/css" href="roulette.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
     <script src='winwheelLibrary/Winwheel.js'></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <title>Roulette</title>
   </head>
@@ -209,6 +222,19 @@
                         var textWinningSegment = winningSegment.text;
 
                         document.cookie = "winningNumber=" + textWinningSegment;
+                        document.cookie = "finishedAnimation=" + 1;
+                        //header("Location:/");
+                        //location.href = 'roulette.php';
+                        console.log(textWinningSegment);
+                        $.post("roulette.php", textWinningSegment);
+                        //$.ajax({
+                        //type: "POST",
+                        //url: 'roulette.php',
+                        //data: textWinningSegment,
+                        //});
+
+                        //xhttp.open("POST", "roulette.php", textWinningSegment);
+                        //xhttp.send();
                     }
 
                     function drawTriangle(){
@@ -228,7 +254,6 @@
                     
                     theWheel.startAnimation();
                     </script>    
-                    <?php sleep(6); ?>
                 </div>        
             </div>
 
