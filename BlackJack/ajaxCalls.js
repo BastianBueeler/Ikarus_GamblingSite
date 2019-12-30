@@ -255,7 +255,7 @@ function draw(){
 
 function setCard(person, card){
 
-    var htmlString = '<img src="' + card + '.png" height="100%" width="160 class="cards>';
+    var htmlString = '<img src="cardsImg/' + card + '.png" height="100%" width="160 class="cards>';
 
     if(person == "dealer"){
         dealerCardPlace.insertAdjacentHTML('beforeend', htmlString);

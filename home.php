@@ -79,7 +79,7 @@
 
         <div class="row mb-4 d-flex justify-content-between">
             
-            <div class="boxBlackJack border border-dark col-5 ml-5 shadow rounded" onclick="window.location='BalckJackFrontend.html';">
+            <div class="boxBlackJack border border-dark col-5 ml-5 shadow rounded" onclick="window.location='BlackJack/BalckJackFrontend.html';">
                 <p class="lead text-center font-weight-bold mt-5 text-primary">Black Jack</p>
             </div>
             

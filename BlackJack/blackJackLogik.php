@@ -4,7 +4,7 @@ class BlackJackGame{
 
 
     function setAmount($amount, $bankAmount, $username){
-        include("dbconnector.inc.php");
+        include("../dbconnector.inc.php");
 
         $amount = strval($amount);
 
@@ -35,7 +35,7 @@ class BlackJackGame{
 
     function getBankAmount($username){
 
-        include("dbconnector.inc.php");
+        include("../dbconnector.inc.php");
         
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
         
@@ -117,7 +117,7 @@ class BlackJackGame{
 
     function multiplyBet($multiplier, $bet, $bankAmount, $username){
 
-        include("dbconnector.inc.php");
+        include("../dbconnector.inc.php");
 
         $betMultiplyed = bcmul($multiplier, $bet);
 
@@ -140,7 +140,7 @@ class BlackJackGame{
 
     function getBetBack($bet, $bankAmount, $username){
 
-        include("dbconnector.inc.php");
+        include("../dbconnector.inc.php");
 
         $newBankAmount = $bet + $bankAmount;
 
