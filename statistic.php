@@ -6,8 +6,8 @@
     if(isset($_SESSION['logedin'])){
         $username = $_SESSION['username'];
 
-        if($username == 'admin'){
-            include("../dbconnector.inc.php");
+        if($username == 'Admin'){
+            include("dbconnector.inc.php");
             //anzeige aller Daten
         } else{
             header("Location: home.php");

@@ -26,14 +26,90 @@
             echo "fail";
         }
 
+        $_SESSION['IkarusCoins'] = $IkarusCoins;
+
         $stmt->close();
         $mysqli->close();
 
-        if(strcmp($username, "Admin")){
-            $isAdmin = TRUE;
-        }else{
-            $isAdmin = FALSE;
-        }
+        $message = '';
+
+        if (!empty($_POST)) {
+            if(isset($_POST['color'])){
+                 $color = $_POST['color'];
+            } else{
+                $color = NULL;
+            }
+
+            if(isset($_POST['definedNumber'])){
+                $definedNumber = htmlspecialchars(trim($_POST['definedNumber']));
+                
+                if($definedNumber < 1 || $definedNumber > 20){
+                    $definedNumber = NULL;
+                }
+            } else {
+               $definedNumber = NULL;
+            }
+
+            if(isset($_POST['setAmountField']) && !empty(trim($_POST['setAmountField']))){
+                $setAmountField = htmlspecialchars(trim($_POST['setAmountField']));
+
+            } else {
+                $error = "Keinen Einsatz vorhanden";
+                $setAmountField = NULL;
+            }
+
+            if($IkarusCoins < $setAmountField){
+               echo "Zu wenig Coins";
+            } else {
+
+                
+                ///$stmt2 = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
+
+                //$stmt2->bind_param("is", $setAmountField, $username);
+                //$stmt2->execute();
+
+                //$stmt2->close();
+                //$mysqli->close();
+
+                $resultWheelNumber = $_COOKIE["winningNumber"];
+                $winningAmount = 0;
+
+                if ($color !== null && $definedNumber == null && $setAmountField !== null){
+
+                    if($resultWheelNumber == 0 && $color == "Grün"){
+                        $winningAmount = $setAmountField * 14;
+                        echo "Du hast grün getroffen!";
+                        
+                    } elseif($resultWheelNumber % 2 == 0 && $color == "Rot"){
+                        $winningAmount = $setAmountField * 2;
+                        echo "Du hast rot getroffen!";
+
+                    } elseif($resultWheelNumber % 2 != 0 && $color == "Schwarz"){
+                        $winningAmount = $setAmountField * 2;
+                        echo "Du hast schwarz getroffen!";
+                    } else {
+                        $winningAmount = 0;
+                        echo "Leider verloren";
+                    }
+                    
+                    echo "farbe--->";
+                    echo $resultWheelNumber;
+                    
+                } elseif ($color == null && $definedNumber !== null && $setAmountField !== null){
+
+                    if($resultWheelNumber == $definedNumber){
+                        $winningAmount = $setAmountField * 14;
+                        echo "Du hast die richtige Zahl getroffen!";
+                    } else {
+                        $winningAmount = 0;
+                        echo "Leider verloren";
+                    }
+                    
+                } else {
+                    echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben";
+                }
+            }
+        } 
     }
 ?>
 
@@ -49,9 +125,9 @@
     <title>Roulette</title>
   </head>
   <body>
-  <div class="bg-dark d-flex align-items-center justify-content-between header">
-                <p class="m-4 text-white font-weight-bold">IKARUS</p>
-                <a href="../home.php"><button type="submit" class="btn btn-secondary mr-4">Zurück</button></a>
+        <div class="bg-dark d-flex align-items-center justify-content-between header">
+            <p class="m-4 text-white font-weight-bold">IKARUS</p>
+            <a href="../home.php"><button type="submit" class="btn btn-secondary mr-4">Zurück</button></a>
         </div>
 
         <div class="rouletteContent">
@@ -104,8 +180,6 @@
                             'pointerAngle' : 0,
                         });
 
-                
-
                     theWheel.segments[1].textFillStyle = 'white';
                     theWheel.segments[2].textFillStyle = 'white';
                     theWheel.segments[3].textFillStyle = 'white';
@@ -130,63 +204,53 @@
                     theWheel.draw();
                     drawTriangle();
 
-                    function alertPrize()
-                    {
+                    function alertPrize(){
                         let winningSegment = theWheel.getIndicatedSegment();
-                        alert("Deine Zahl: " + winningSegment.text + "!");
+                        var textWinningSegment = winningSegment.text;
+
+                        document.cookie = "winningNumber=" + textWinningSegment;
                     }
-                
-                    
-                
-                    function drawTriangle()
-                    {
+
+                    function drawTriangle(){
                         let ctx = theWheel.ctx;
                 
-                        ctx.strokeStyle = 'navy';     // Set line colour.
-                        ctx.fillStyle   = 'yellow';     // Set fill colour.
+                        ctx.strokeStyle = 'navy';     
+                        ctx.fillStyle   = 'yellow';     
                         ctx.lineWidth   = 2;
-                        ctx.beginPath();              // Begin path.
-                        ctx.moveTo(410, -10);           // Move to initial position.
-                        ctx.lineTo(470, -10);           // Draw lines to make the shape.
+                        ctx.beginPath();              
+                        ctx.moveTo(410, -10);           
+                        ctx.lineTo(470, -10);           
                         ctx.lineTo(440, 11);
                         ctx.lineTo(411, -10);
-                        ctx.stroke();                 // Complete the path by stroking (draw lines).
-                        ctx.fill();                   // Then fill.
+                        ctx.stroke();                 
+                        ctx.fill();                   
                     }
+                    
+                    theWheel.startAnimation();
                     </script>    
-                </div>
-                <p class="text-black mb-0" id="setAmountText">Ihr Einsatz</p>
-                <input id="setAmountField" type="number" min="0" max="999999999999999999999">
-                <br/>
-
-                
+                    <?php sleep(6); ?>
+                </div>        
             </div>
 
             <div class="playMenu pl-5 pr-5 pt-5 bg-secondary lead">
-                <p class="text-white">Sie besitzen</p>
-                <br/>
+                <form action="" method="post">
+                    <p class="text-white">Ihre Coins: <?php echo $IkarusCoins ?></p> 
+                    <br/>
+                    <p class="text-white mb-0">Ihr Einsatz</p>
+                    <input class="w-100" id="setAmountField" name="setAmountField" type="number" min="0" max="9999999999999999999">
+                    <br/>
 
-                <p class="text-white mb-0">Setze auf Zahl</p>
-                <input class="w-100" id="definednumber" type="number" min="0" max="60">
-                <br/>
-                <br/>
-                <br/>
-
-                <form class="text-white mb-0"action="">
-                    <p>Wähle eine Farbe</p>
-                    <input type="radio" name="color" value="red"> Rot<br>
-                    <input type="radio" name="color" value="black"> Schwarz<br>
-                    <input type="radio" name="color" value="green"> Grün<br>
+                    <p class="text-white mb-0">Setze auf Zahl</p>
+                    <input class="w-100" id="definedNumber" name="definedNumber" type="number" min="0" max="20">
+                    <br/>
+                    <br/>
+                        <p class="text-white mb-0">Wähle eine Farbe</p>
+                        <input type="radio" id="color" name="color" value="red"> Rot<br>
+                        <input type="radio" id="color" name="color" value="black"> Schwarz<br>
+                        <input type="radio" id="color" name="color" value="green"> Grün<br>
+                    <button type="submit" class="btn btn-dark mt-4 w-100" id="spinWheel">Jetzt spielen</button>
                 </form>
-                <br/>
-
-                <button onClick="theWheel.startAnimation();" class="btn btn-dark mt-4 w-100" id="spinWheel">Jetzt spielen</button>
             </div>
-
-            
-
-            
-
         </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
