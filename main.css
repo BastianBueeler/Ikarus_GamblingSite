@@ -118,3 +118,13 @@ body{
     margin-right: 5px;
 
 }
+
+/*Statistik*/
+.statistic {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: gainsboro;
+}

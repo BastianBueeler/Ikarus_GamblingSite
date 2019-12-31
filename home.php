@@ -91,7 +91,7 @@
         <?php
             if($isAdmin == 0){
                 echo "<div class='row d-flex justify-content-start'>";
-                echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='http://google.com';'>";
+                echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='statistic.php';'>";
                 echo "<p class='lead text-center font-weight-bold mt-5'>Statistiken</p>";
                 echo "</div>";
                 echo "</div>";
