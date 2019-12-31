@@ -30,9 +30,6 @@
 
         $_SESSION['IkarusCoins'] = $IkarusCoins;
 
-        $stmt->close();
-        $mysqli->close();
-
         $message = '';
 
         if (!empty($_POST)) {
@@ -65,23 +62,21 @@
                echo "Zu wenig Coins";
             } else {
 
-                
-                ///$stmt2 = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
+                $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
 
-                //$stmt2->bind_param("is", $setAmountField, $username);
-                //$stmt2->execute();
+                $temporaryResult = $IkarusCoins - $setAmountField;
 
-                //$stmt2->close();
-                //$mysqli->close();
+                $stmt->bind_param("is", $temporaryResult, $username);
+                $stmt->execute();
 
                 print_r($_POST);
                 //if(isset($_COOKIE["finishedAnimation"])){
                    // if($_COOKIE["finishedAnimation"] == 1){
-                if(isset($_POST["textWinningSegment"])){
-                    if($_POST["textWinningSegment"] != NULL){
+                if(isset($_POST["winningNumber"])){
+                    if($_POST["winningNumber"] != NULL){
                         setcookie("finishedAnimation", 0);
                         //$resultWheelNumber = $_COOKIE["winningNumber"];
-                        $resultWheelNumber = $_POST["textWinningSegment"];
+                        $resultWheelNumber = $_POST["winningNumber"];
                         $winningAmount = 0;
 
                         if ($color !== null && $definedNumber == null && $setAmountField !== null){
@@ -118,10 +113,18 @@
                         } else {
                             echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben";
                         }
+                        $resultCoins = $IkarusCoins + $winningAmount;
+                        $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
+                        $stmt->bind_param("is", $resultCoins, $username);
+                        $stmt->execute();
+                        
+                        $stmt->close();
+                        $mysqli->close();
                     }
                 }
             }
         } 
+        print_r($_POST);
     }
 ?>
 
@@ -133,7 +136,7 @@
     <link rel="stylesheet" type="text/css" href="roulette.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
     <script src='winwheelLibrary/Winwheel.js'></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="minAjaxLibrary/minify/index.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <title>Roulette</title>
   </head>
@@ -193,66 +196,81 @@
                             'pointerAngle' : 0,
                         });
 
-                    theWheel.segments[1].textFillStyle = 'white';
-                    theWheel.segments[2].textFillStyle = 'white';
-                    theWheel.segments[3].textFillStyle = 'white';
-                    theWheel.segments[4].textFillStyle = 'white';
-                    theWheel.segments[5].textFillStyle = 'white';
-                    theWheel.segments[6].textFillStyle = 'white';
-                    theWheel.segments[7].textFillStyle = 'white';
-                    theWheel.segments[8].textFillStyle = 'white';
-                    theWheel.segments[9].textFillStyle = 'white';
-                    theWheel.segments[10].textFillStyle = 'white';
-                    theWheel.segments[11].textFillStyle = 'white';
-                    theWheel.segments[12].textFillStyle = 'white';
-                    theWheel.segments[13].textFillStyle = 'white';
-                    theWheel.segments[14].textFillStyle = 'white';
-                    theWheel.segments[15].textFillStyle = 'white';
-                    theWheel.segments[16].textFillStyle = 'white';
-                    theWheel.segments[17].textFillStyle = 'white';
-                    theWheel.segments[18].textFillStyle = 'white';
-                    theWheel.segments[19].textFillStyle = 'white';
-                    theWheel.segments[20].textFillStyle = 'white';
-                    theWheel.segments[21].textFillStyle = 'white';
-                    theWheel.draw();
-                    drawTriangle();
+                        theWheel.segments[1].textFillStyle = 'white';
+                        theWheel.segments[2].textFillStyle = 'white';
+                        theWheel.segments[3].textFillStyle = 'white';
+                        theWheel.segments[4].textFillStyle = 'white';
+                        theWheel.segments[5].textFillStyle = 'white';
+                        theWheel.segments[6].textFillStyle = 'white';
+                        theWheel.segments[7].textFillStyle = 'white';
+                        theWheel.segments[8].textFillStyle = 'white';
+                        theWheel.segments[9].textFillStyle = 'white';
+                        theWheel.segments[10].textFillStyle = 'white';
+                        theWheel.segments[11].textFillStyle = 'white';
+                        theWheel.segments[12].textFillStyle = 'white';
+                        theWheel.segments[13].textFillStyle = 'white';
+                        theWheel.segments[14].textFillStyle = 'white';
+                        theWheel.segments[15].textFillStyle = 'white';
+                        theWheel.segments[16].textFillStyle = 'white';
+                        theWheel.segments[17].textFillStyle = 'white';
+                        theWheel.segments[18].textFillStyle = 'white';
+                        theWheel.segments[19].textFillStyle = 'white';
+                        theWheel.segments[20].textFillStyle = 'white';
+                        theWheel.segments[21].textFillStyle = 'white';
+                        theWheel.draw();
+                        drawTriangle();                        
 
-                    function alertPrize(){
-                        let winningSegment = theWheel.getIndicatedSegment();
-                        var textWinningSegment = winningSegment.text;
+                        function alertPrize(){
+                            let winningSegment = theWheel.getIndicatedSegment();
+                            var textWinningSegment = winningSegment.text;
 
-                        document.cookie = "winningNumber=" + textWinningSegment;
-                        document.cookie = "finishedAnimation=" + 1;
-                        //header("Location:/");
-                        //location.href = 'roulette.php';
-                        console.log(textWinningSegment);
-                        $.post("roulette.php", textWinningSegment);
-                        //$.ajax({
-                        //type: "POST",
-                        //url: 'roulette.php',
-                        //data: textWinningSegment,
-                        //});
+                            document.cookie = "winningNumber=" + textWinningSegment;
+                            //document.cookie = "finishedAnimation=" + 1;
+                            //header("Location:.");
+                            //location.href = 'roulette.php';
+                            
+                            //var request = new XMLHttpRequest();
+                            //var url = 'roulette.php';
+                            //request.open('POST', url, true);
+                            //request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                            //var params = 'winningNumber=' + textWinningSegment;
+                            //request.send(params);
+                            
+                            //$.ajax({
+                            //type: "POST",
+                            //url: 'roulette.php',
+                            //data: textWinningSegment
+                            //});
 
-                        //xhttp.open("POST", "roulette.php", textWinningSegment);
-                        //xhttp.send();
-                    }
+                            
+                            //minAjax({
+                            //    url:"roulette.php",
+                             //   type:"POST",//Request type GET/POST
+                                //Send Data in form of GET/POST
+                             //   data:{
+                             //   "winningNumber": textWinningSegment
+                             //   }
+                            //});
 
-                    function drawTriangle(){
-                        let ctx = theWheel.ctx;
-                
-                        ctx.strokeStyle = 'navy';     
-                        ctx.fillStyle   = 'yellow';     
-                        ctx.lineWidth   = 2;
-                        ctx.beginPath();              
-                        ctx.moveTo(410, -10);           
-                        ctx.lineTo(470, -10);           
-                        ctx.lineTo(440, 11);
-                        ctx.lineTo(411, -10);
-                        ctx.stroke();                 
-                        ctx.fill();                   
-                    }
+                            //xhttp.open("POST", "roulette.php", textWinningSegment);
+                            //xhttp.send();
+                        }
+
+                        function drawTriangle(){
+                            let ctx = theWheel.ctx;
                     
-                    theWheel.startAnimation();
+                            ctx.strokeStyle = 'navy';     
+                            ctx.fillStyle   = 'yellow';     
+                            ctx.lineWidth   = 2;
+                            ctx.beginPath();              
+                            ctx.moveTo(410, -10);           
+                            ctx.lineTo(470, -10);           
+                            ctx.lineTo(440, 11);
+                            ctx.lineTo(411, -10);
+                            ctx.stroke();                 
+                            ctx.fill();                   
+                        }
+                            //das isch wie dis; funktioniert das nit? nei; s'problem isch: du wilsch uf das element zuegriffe befor es erstellt worde ist, bi mir nit sicher ob das funktioniert
                     </script>    
                 </div>        
             </div>
@@ -277,6 +295,10 @@
                 </form>
             </div>
         </div>
+    <script>
+        var spinWheelBtn = document.getElementById("spinWheel");
+        spinWheelBtn.addEventListener("click", function() {theWheel.startAnimation();});
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
