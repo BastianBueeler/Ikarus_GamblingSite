@@ -1,9 +1,8 @@
 <?php
 
-    session_start();
     session_regenerate_id(true);
 
-    if(isset($_SESSION['logedin'])){
+    //if(isset($_SESSION['logedin'])){
         
         include("../dbconnector.inc.php");
 
@@ -36,7 +35,7 @@
 
             if(isset($_POST['color'])){
                  $color = $_POST['color'];
-            } else{
+            } else {
                 $color = NULL;
             }
 
@@ -125,7 +124,7 @@
             }
         } 
         print_r($_POST);
-    }
+    //}
 ?>
 
 <!DOCTYPE html>
@@ -270,7 +269,6 @@
                             ctx.stroke();                 
                             ctx.fill();                   
                         }
-                            //das isch wie dis; funktioniert das nit? nei; s'problem isch: du wilsch uf das element zuegriffe befor es erstellt worde ist, bi mir nit sicher ob das funktioniert
                     </script>    
                 </div>        
             </div>
