@@ -2,7 +2,8 @@
 
     session_regenerate_id(true);
 
-    //if(isset($_SESSION['logedin'])){
+    //Wird überprüft, ob User eingeloggt ist
+    if(isset($_SESSION['logedin'])){
         
         include("../dbconnector.inc.php");
 
@@ -10,6 +11,7 @@
 
         include('../setNewCoins.php');
 
+        //Abfrage der Ikaruscoins
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 
@@ -31,14 +33,17 @@
 
         $message = '';
 
+        //Wenn POST nicht leer ist, für das folgende aus
         if (!empty($_POST)) {
 
+            //Setze die Farbe
             if(isset($_POST['color'])){
                  $color = $_POST['color'];
             } else {
                 $color = NULL;
             }
 
+            //Setze die definierte Zahl
             if(isset($_POST['definedNumber'])){
                 $definedNumber = htmlspecialchars(trim($_POST['definedNumber']));
                 
@@ -49,6 +54,7 @@
                $definedNumber = NULL;
             }
 
+            //Setze den gesetzten Betrag
             if(isset($_POST['setAmountField']) && !empty(trim($_POST['setAmountField']))){
                 $setAmountField = htmlspecialchars(trim($_POST['setAmountField']));
 
@@ -57,10 +63,12 @@
                 $setAmountField = NULL;
             }
 
+            //Wenn Die Ikaruscoins kleines sind, als der Eingegebene Betrag gib echo aus, sonst führ den Rest aus.
             if($IkarusCoins < $setAmountField){
                echo "Zu wenig Coins";
             } else {
 
+                //Update die Ikaruscoins auf der Datenbank
                 $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
 
                 $temporaryResult = $IkarusCoins - $setAmountField;
@@ -69,15 +77,14 @@
                 $stmt->execute();
 
                 print_r($_POST);
-                //if(isset($_COOKIE["finishedAnimation"])){
-                   // if($_COOKIE["finishedAnimation"] == 1){
-                if(isset($_POST["winningNumber"])){
-                    if($_POST["winningNumber"] != NULL){
-                        setcookie("finishedAnimation", 0);
-                        //$resultWheelNumber = $_COOKIE["winningNumber"];
-                        $resultWheelNumber = $_POST["winningNumber"];
+                //Wenn im Cookie winingNumber existiert, fahr weiter
+                if(isset($_COOKIE["winningNumber"])){
+                    if($_COOKIE["winningNumber"] != NULL){
+                
+                        $resultWheelNumber = $_COOKIE["winningNumber"];
                         $winningAmount = 0;
 
+                        //Wenn man Farbe ausgewählt hat, Werte die Daten aus.
                         if ($color !== null && $definedNumber == null && $setAmountField !== null){
 
                             if($resultWheelNumber == 0 && $color == "Grün"){
@@ -99,6 +106,7 @@
                             echo "farbe--->";
                             echo $resultWheelNumber;
                             
+                        //Wenn man eine definierte Zahl ausgewählt hat, Werte die Daten aus
                         } elseif ($color == null && $definedNumber !== null && $setAmountField !== null){
 
                             if($resultWheelNumber == $definedNumber){
@@ -112,6 +120,7 @@
                         } else {
                             echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben";
                         }
+                        //Update die Datenbank mit den neuen Werten
                         $resultCoins = $IkarusCoins + $winningAmount;
                         $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
                         $stmt->bind_param("is", $resultCoins, $username);
@@ -124,7 +133,7 @@
             }
         } 
         print_r($_POST);
-    //}
+    }
 ?>
 
 <!DOCTYPE html>
