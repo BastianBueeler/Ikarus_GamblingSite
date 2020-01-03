@@ -1,14 +1,16 @@
 <?php
 
-    session_start();
+    //Session ID wird neu gesetzt
     session_regenerate_id(true);
 
+    //Wenn User eingeloggt ist.
     if(isset($_SESSION['logedin'])){
         
         include("dbconnector.inc.php");
 
         $username = $_SESSION['username'];
 
+        //Datenbankabfrage der und anschliessendes setzen Ikaruscoins
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 
@@ -29,13 +31,14 @@
         $stmt->close();
         $mysqli->close();
 
+        //Setzt isAdmin auf True, wenn Username = Admin
         if(strcmp($username, "Admin")){
             $isAdmin = TRUE;
         }else{
             $isAdmin = FALSE;
         }
 
-    }else{
+    } else {
         header("Location: userlogin.php");
     }
 
@@ -61,6 +64,7 @@
             <div class="dropdown-menu">
                 <a href="signOut.php" target="_self" class="dropdown-item">Benutzer abmelden</a>
                 <?php
+                    //Wenn der Username nicht Admin ist, dann darf er sich löschen können.
                     if($isAdmin == 1){
                         echo "<a href='deleteUser.php' target='_self' class='dropdown-item'>Benutzer löschen</a>";
                     }
@@ -89,6 +93,8 @@
         </div>
         
         <?php
+
+            //Wenn der Username Admin ist, zeig auf Home ein weiters Feld an für die Statistik Seite.
             if($isAdmin == 0){
                 echo "<div class='row d-flex justify-content-start'>";
                 echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='statistic.php';'>";

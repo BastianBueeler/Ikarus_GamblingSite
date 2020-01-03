@@ -1,25 +1,34 @@
 <?php
 
+  //Einbindung der Datenbank
   include("dbconnector.inc.php");
 
   $username = $pattern = $error = $message =""; 
-
+  
+  //Wenn es einen POST request gab, fahre fort.
   if ($_SERVER['REQUEST_METHOD'] == "POST"){
+    
+    //Wenn "Username" in POST existiert, Validiere es und speichere es ab, sonst gib einen Fehler aus.
     if(isset($_POST['username']) && !empty(trim($_POST['username'])) && strlen(trim($_POST['username'])) <= 30){
       $username = htmlspecialchars(trim($_POST['username']));
     } else {
       $error = "Die Eingabe des Benutzernamens ist nicht korrekt!! ";
     }
-      
+    
+    //Pattern zur Validierung des Passworts
     $pattern = '/(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/';
 
+    //Wenn "Password" in POST existiert, Validiere es und speichere es ab, sonst gib einen Fehler aus.
     if(isset($_POST['password']) && preg_match($pattern, $_POST['password']) && strlen(trim($_POST['password'])) <= 30){
       $password = htmlspecialchars(trim($_POST['password']));
     } else {
       $error = "Die Eingabe des Passwortes ist nicht korrekt!! ";
     }
 
+    //Überprüft, ob es keine Fehler gab
     if(empty($error)){
+
+      //Abfrage des Passworts in der datenbank des angegebenen Users
       $stmt = $mysqli->prepare("SELECT Password FROM person WHERE username = ?");
       $stmt->bind_param("s", $username);
 
@@ -29,12 +38,19 @@
 
       if($stmt->affected_rows !== 0){
         while($row = $result->fetch_assoc()){
+          
+          //Wenn das eingegebene verhashte Passwort = dem verhashtem Passwort in der Datenbank ist
           if(password_verify($password, $row['Password'])){
+
+            //Starte eine Session und erstelle eine neue ID
             session_start();
             session_regenerate_id(true);
+
+            //Schreib den Usernamen und "logedin = True" in die Session
             $_SESSION['username'] = $username;
             $_SESSION['logedin'] = TRUE;
             
+            //Leite den User auf home.php weiter
             header('Location: home.php');
           } else {
             $error .= "Passwort oder Usernamen falsch, versuche es erneuert";

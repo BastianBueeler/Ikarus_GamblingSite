@@ -1,5 +1,6 @@
 <?php
     
+    //Session ID wird neu gesetzt
     session_regenerate_id(true);
 
     //Wird überprüft, ob User eingeloggt ist

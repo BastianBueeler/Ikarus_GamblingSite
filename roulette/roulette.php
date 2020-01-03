@@ -1,10 +1,12 @@
 <?php
 
+    //Die Session ID wird neu gesetzt
     session_regenerate_id(true);
 
     //Wird überprüft, ob User eingeloggt ist
     if(isset($_SESSION['logedin'])){
         
+        //Hinzufügen der Datenbank
         include("../dbconnector.inc.php");
 
         $username = $_SESSION['username'];
@@ -31,9 +33,7 @@
 
         $_SESSION['IkarusCoins'] = $IkarusCoins;
 
-        $message = '';
-
-        //Wenn POST nicht leer ist, für das folgende aus
+        //Wenn POST nicht leer ist, führ das folgende aus
         if (!empty($_POST)) {
 
             //Setze die Farbe
@@ -162,6 +162,7 @@
                         Canvas not supported, use another browser.
                     </canvas>
                     <script>
+                        //Erstellen des Roulettes anhand von js Script
                         let theWheel = new Winwheel({
                             'canvasId'    : 'canvas',
                             'numSegments' : 21,
@@ -228,6 +229,7 @@
                         theWheel.draw();
                         drawTriangle();                        
 
+                        //Preis wird gesetzt
                         function alertPrize(){
                             let winningSegment = theWheel.getIndicatedSegment();
                             var textWinningSegment = winningSegment.text;
@@ -303,6 +305,7 @@
             </div>
         </div>
     <script>
+        //Beim anklicken des Buttons startet die Animation
         var spinWheelBtn = document.getElementById("spinWheel");
         spinWheelBtn.addEventListener("click", function() {theWheel.startAnimation();});
     </script>

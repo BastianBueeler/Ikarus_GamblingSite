@@ -1,14 +1,19 @@
 <?php
 
-    session_start();
+    //Session ID wird neu gesetzt
     session_regenerate_id(true);
 
+    //Wenn User eingeloggt ist, führ das weitere aus. Sonst geh zu home.php
     if(isset($_SESSION['logedin'])){
         $username = $_SESSION['username'];
 
+        //Wenn der Username = Admin ist, mach weiter. Ansonsten geh zu home.php
         if($username == 'Admin'){
+
+            //Einbindung der Datenbank
             include("dbconnector.inc.php");
 
+            //Abfrage aller Daten, welche zum auswerten benötigt werden.
             $stmt = $mysqli->prepare("SELECT personstatistic.*, person.Username FROM personstatistic 
                                         INNER JOIN person on person.fk_statistic=personstatistic.ID");
 
@@ -16,9 +21,11 @@
 
             $result = $stmt->get_result();
 
+            //Wenn Daten gefunden worden sind.
             if($stmt->affected_rows !== 0){
                 
                 while($row = $result->fetch_assoc()){
+                    //Abfüllen der Daten
                     $usernameTable= $row['Username'];
                     $countedBlackJackGames = $row['CountedBlackJackGames'];
                     $countedRouletteGames = $row['CountedRouletteGames'];
@@ -29,6 +36,7 @@
                     $moneySpentBlackJack = $row['MoneySpentBlackJack'];
                     $moneySpentRoulette = $row['MoneySpentRoulette'];
 
+                    //Abgefüllte Daten in Array speichern
                     $usernameArray[] = $usernameTable;
                     $countedBlackJackGamesArray[] = $countedBlackJackGames;
                     $countedRouletteGamesArray[] = $countedRouletteGames;
@@ -55,9 +63,11 @@
             $stmt->close();
             $mysqli->close();
 
-        } else{
+        } else {
             header("Location: home.php");
-        }
+        } 
+    } else {
+        header("Location: home.php");
     }
 ?>
 
