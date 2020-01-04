@@ -71,15 +71,8 @@
                echo "Zu wenig Coins";
             } else {
 
-                //Update die Ikaruscoins auf der Datenbank
-                $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
-
                 $temporaryResult = $IkarusCoins - $setAmountField;
 
-                $stmt->bind_param("is", $temporaryResult, $username);
-                $stmt->execute();
-
-                print_r($_POST);
                 //Wenn im Cookie winingNumber existiert, fahr weiter
                 if(isset($_COOKIE["winningNumber"])){
                     if($_COOKIE["winningNumber"] != NULL){
@@ -90,52 +83,59 @@
                         //Wenn man Farbe ausgewählt hat, Werte die Daten aus.
                         if ($color !== null && $definedNumber == null && $setAmountField !== null){
 
-                            if($resultWheelNumber == 0 && $color == "Grün"){
-                                $winningAmount = $setAmountField * 14;
-                                echo "Du hast grün getroffen!";
-                                
-                            } elseif($resultWheelNumber % 2 == 0 && $color == "Rot"){
-                                $winningAmount = $setAmountField * 2;
-                                echo "Du hast rot getroffen!";
+                            if($resultWheelNumber == 0){
+                                $resultColor ="Grün";
+                            } elseif ($resultWheelNumber % 2 == 0){
+                                $resultColor ="Rot";
+                            } elseif ($resultWheelNumber % 2 != 0){
+                                $resultColor ="Schwarz";
+                            }
 
-                            } elseif($resultWheelNumber % 2 != 0 && $color == "Schwarz"){
+                            if($resultColor == "Grün" && $color == "green"){
+                                $winningAmount = $setAmountField * 14;
+                                $winningText = "gewonnen!";
+                                
+                            } elseif($resultColor == "Rot" && $color == "red"){
                                 $winningAmount = $setAmountField * 2;
-                                echo "Du hast schwarz getroffen!";
+                                $winningText = "gewonnen!";
+
+                            } elseif($resultColor == "Schwarz" && $color == "black"){
+                                $winningAmount = $setAmountField * 2;
+                                $winningText = "gewonnen!";
                             } else {
                                 $winningAmount = 0;
-                                echo "Leider verloren";
+                                $winningText = "Leider verloren";
                             }
-                            
-                            echo "farbe--->";
-                            echo $resultWheelNumber;
                             
                         //Wenn man eine definierte Zahl ausgewählt hat, Werte die Daten aus
                         } elseif ($color == null && $definedNumber !== null && $setAmountField !== null){
 
                             if($resultWheelNumber == $definedNumber){
                                 $winningAmount = $setAmountField * 14;
-                                echo "Du hast die richtige Zahl getroffen!";
+                                $winningText = "gewonnen!";
                             } else {
                                 $winningAmount = 0;
-                                echo "Leider verloren";
+                                $winningText = "Leider verloren";
                             }
                             
                         } else {
-                            echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben";
+                            echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben. Es kann nur entweder Farbe oder Zahl ausgewählt werden.";
                         }
                         //Update die Datenbank mit den neuen Werten
-                        $resultCoins = $IkarusCoins + $winningAmount;
+                        $resultCoins = $temporaryResult + $winningAmount;
                         $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
                         $stmt->bind_param("is", $resultCoins, $username);
                         $stmt->execute();
                         
                         $stmt->close();
                         $mysqli->close();
+                        $IkarusCoins = $resultCoins;
+
+                        setcookie("winningNumber", NULL);
                     }
                 }
             }
         } 
-        print_r($_POST);
     }
 ?>
 
@@ -144,10 +144,9 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="roulette.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
     <script src='winwheelLibrary/Winwheel.js'></script>
-    <script src="minAjaxLibrary/minify/index.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <title>Roulette</title>
   </head>
@@ -159,12 +158,29 @@
 
         <div class="rouletteContent">
             
-            <div class="playField d-flex flex-column">
+            <div class="rouletteplayField d-flex flex-column">
+
+                <p class="text-black resultText"> 
+                    <?php 
+                        if(isset($resultWheelNumber) && $color !== null){
+                            echo "Ergebnis: " . $resultColor . '<br>';
+                            echo"Sie haben " . $winningText;
+
+                        } elseif(isset($resultWheelNumber) && $definedNumber !== null){
+                            echo "Ergebnis: " . $resultWheelNumber . '<br>';
+                            echo "Sie haben " . $winningText;
+                            
+                        } else {
+                            echo "";
+                        } 
+                    ?>
+                </p> 
                 <div class="rouletteWheelBody d-flex flex-column">
                     <canvas id='canvas'  width='880' height='300'>
                         Canvas not supported, use another browser.
                     </canvas>
                     <script>
+
                         //Erstellen des Roulettes anhand von js Script
                         let theWheel = new Winwheel({
                             'canvasId'    : 'canvas',
@@ -232,41 +248,13 @@
                         theWheel.draw();
                         drawTriangle();                        
 
-                        //Preis wird gesetzt
+                        //Preis wird gesetzt und die eingegebenen Daten weitergesendet
                         function alertPrize(){
                             let winningSegment = theWheel.getIndicatedSegment();
                             var textWinningSegment = winningSegment.text;
 
                             document.cookie = "winningNumber=" + textWinningSegment;
-                            //document.cookie = "finishedAnimation=" + 1;
-                            //header("Location:.");
-                            //location.href = 'roulette.php';
-                            
-                            //var request = new XMLHttpRequest();
-                            //var url = 'roulette.php';
-                            //request.open('POST', url, true);
-                            //request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                            //var params = 'winningNumber=' + textWinningSegment;
-                            //request.send(params);
-                            
-                            //$.ajax({
-                            //type: "POST",
-                            //url: 'roulette.php',
-                            //data: textWinningSegment
-                            //});
-
-                            
-                            //minAjax({
-                            //    url:"roulette.php",
-                             //   type:"POST",//Request type GET/POST
-                                //Send Data in form of GET/POST
-                             //   data:{
-                             //   "winningNumber": textWinningSegment
-                             //   }
-                            //});
-
-                            //xhttp.open("POST", "roulette.php", textWinningSegment);
-                            //xhttp.send();
+                            document.getElementById("form").submit();
                         }
 
                         function drawTriangle(){
@@ -284,15 +272,15 @@
                             ctx.fill();                   
                         }
                     </script>    
-                </div>        
+                </div>   
             </div>
 
-            <div class="playMenu pl-5 pr-5 pt-5 bg-secondary lead">
-                <form action="" method="post">
+            <div class="rouletteplayMenu pl-5 pr-5 pt-5 bg-secondary lead">
+                <form action="" method="post" id="form">
                     <p class="text-white">Ihre Coins: <?php echo $IkarusCoins ?></p> 
                     <br/>
                     <p class="text-white mb-0">Ihr Einsatz</p>
-                    <input class="w-100" id="setAmountField" name="setAmountField" type="number" min="0" max="9999999999999999999">
+                    <input class="w-100" id="setAmountField" name="setAmountField" type="number" min="0" max="9999999999999999999" required>
                     <br/>
 
                     <p class="text-white mb-0">Setze auf Zahl</p>
@@ -308,9 +296,14 @@
             </div>
         </div>
     <script>
+
         //Beim anklicken des Buttons startet die Animation
         var spinWheelBtn = document.getElementById("spinWheel");
-        spinWheelBtn.addEventListener("click", function() {theWheel.startAnimation();});
+        spinWheelBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            theWheel.startAnimation();
+        });
+        
     </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

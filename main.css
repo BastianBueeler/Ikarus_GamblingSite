@@ -112,12 +112,46 @@ body{
     height: 33%;
 }
 
-.cards{
+.cards {
 
     margin-left: 5px;
     margin-right: 5px;
 
 }
+
+/*Roulette*/
+.rouletteContent {
+    width: 100%;
+    height: calc(100% - 100px);
+}
+
+.rouletteplayField {
+    height: 100%;
+    width: 80%;
+    margin: 0;
+    float: left;
+}
+
+.rouletteplayMenu {
+    height: 100%;
+    width: 20%;
+    margin: 0;
+    float: right;
+}
+
+.rouletteWheelBody {
+    margin: 5%;
+}
+
+.resultText {
+    margin-left: 35%;
+    margin-right: 35%;
+    margin-top: 20px;
+    font-size: 20px;
+    font-family: fantasy;
+    text-align: center;
+}
+
 
 /*Statistik*/
 .statistic {
