@@ -13,6 +13,7 @@
         include("../dbconnector.inc.php");
 
         $username = $_SESSION['username'];
+        $error = "";
 
         include('../setNewCoins.php');
 
@@ -31,7 +32,7 @@
             }
 
         }else{
-            echo "fail";
+            echo "Keine Daten";
         }
 
         $_SESSION['IkarusCoins'] = $IkarusCoins;
@@ -62,13 +63,12 @@
                 $setAmountField = htmlspecialchars(trim($_POST['setAmountField']));
 
             } else {
-                $error = "Keinen Einsatz vorhanden";
                 $setAmountField = NULL;
             }
 
             //Wenn Die Ikaruscoins kleines sind, als der Eingegebene Betrag gib echo aus, sonst führ den Rest aus.
             if($IkarusCoins < $setAmountField){
-               echo "Zu wenig Coins";
+               $error = "Zu wenig Coins!";
             } else {
 
                 $temporaryResult = $IkarusCoins - $setAmountField;
@@ -119,7 +119,7 @@
                             }
                             
                         } else {
-                            echo "Sie haben entweder zu viel oder zu wenig Optionen ausgewählt oder etwas falsch eingegeben. Es kann nur entweder Farbe oder Zahl ausgewählt werden.";
+                            $error = "Es kann nur entweder Farbe oder Zahl ausgewählt werden und es muss einen Betrag gesetzt werden!";
                         }
                         //Update die Datenbank mit den neuen Werten
                         $resultCoins = $temporaryResult + $winningAmount;
@@ -162,6 +162,7 @@
 
                 <p class="text-black resultText"> 
                     <?php 
+                    //Ausgabe des Ergebnis
                         if(isset($resultWheelNumber) && $color !== null){
                             echo "Ergebnis: " . $resultColor . '<br>';
                             echo"Sie haben " . $winningText;
@@ -173,6 +174,11 @@
                         } else {
                             echo "";
                         } 
+                    
+                        //Falls es Fehler gibt, ausgabe der Fehler
+                        if(isset($error)){
+                            echo $error;
+                        }
                     ?>
                 </p> 
                 <div class="rouletteWheelBody d-flex flex-column">
