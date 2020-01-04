@@ -29,6 +29,7 @@
                 include("dbconnector.inc.php");
 
                 $password = password_hash($password, PASSWORD_DEFAULT);
+
                 $username = $_SESSION['username'];
 
                 $stmt = $mysqli->prepare("UPDATE person SET Password = ? WHERE username = ?");
@@ -38,7 +39,7 @@
                 if($stmt->execute()){
                     $success = "Das Passwort wurde erfolgreich geändert";
                 }else{
-                    $error .= "Etwas ist schief gelaufen";
+                    $error = "Etwas ist schief gelaufen";
                 }
             }
         }
@@ -67,30 +68,6 @@
             if(strlen($error)){
                 echo "<div class=\"alert alert-danger\" role=\"alert\">" . $error . "</div>";
             }elseif(strlen($success)){
-
-                $stmt = $mysqli->prepare("SELECT * FROM person WHERE username = ?");
-                echo $username;
-                $abc = strval($username);
-                $stmt->bind_param("s", $abc);
-
-                echo $stmt->fullQuery();
-
-                $result = $stmt->get_result();
-
-                if($stmt->affected_rows !== 0){
-                    
-                    while($row = $result->fetch_assoc()){
-                        if(password_verify($passwordAgain, $row['Password'])){
-                            echo "hash funktioniert";
-                        }else{
-                            echo "hash fail";
-                        }
-                    }
-        
-                }else{
-                    echo "fail";
-                }
-
                 echo "<div class=\"alert alert-success\" role=\"alert\">" . $success . "</div>";
             }  
         ?>
