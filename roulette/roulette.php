@@ -14,8 +14,12 @@
         $username = $_SESSION['username'];
         $error = "";
 
-        //Abfrage der Ikaruscoins
-        $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
+        //Abfrage der Ikaruscoins und der Statistikdaten
+        $stmt = $mysqli->prepare("SELECT person.IkarusCoins, personstatistic.CountedRouletteGames, 
+                                 personstatistic.RouletteWins, personstatistic.MoneyWonRoulette,
+                                 personstatistic.MoneySpentRoulette FROM person 
+                                 INNER JOIN personstatistic ON person.fk_statistic=personstatistic.ID 
+                                 WHERE username = ?");
         $stmt->bind_param("s", $username);
 
         $stmt->execute();
@@ -26,6 +30,10 @@
             
             while($row = $result->fetch_assoc()){
                 $IkarusCoins = $row['IkarusCoins'];
+                $countedRouletteGames = $row['CountedRouletteGames'];
+                $rouletteWins = $row['RouletteWins'];
+                $moneyWonRoulette = $row['MoneyWonRoulette'];
+                $moneySpentRoulette = $row['MoneySpentRoulette'];
             }
 
         }else{
@@ -76,6 +84,9 @@
                 if(isset($_COOKIE["winningNumber"])){
                     if($_COOKIE["winningNumber"] != NULL){
                 
+                        $countedRouletteGames += 1;
+                        $moneySpentRoulette += $setAmountField;
+
                         $resultWheelNumber = $_COOKIE["winningNumber"];
                         $winningAmount = 0;
 
@@ -93,14 +104,21 @@
                             if($resultColor == "Grün" && $color == "green"){
                                 $winningAmount = $setAmountField * 14;
                                 $winningText = "gewonnen!";
+                                $rouletteWins += 1;
+                                $moneyWonRoulette += $winningAmount;
                                 
                             } elseif($resultColor == "Rot" && $color == "red"){
                                 $winningAmount = $setAmountField * 2;
                                 $winningText = "gewonnen!";
+                                $rouletteWins += 1;
+                                $moneyWonRoulette += $winningAmount;
 
                             } elseif($resultColor == "Schwarz" && $color == "black"){
                                 $winningAmount = $setAmountField * 2;
                                 $winningText = "gewonnen!";
+                                $rouletteWins += 1;
+                                $moneyWonRoulette += $winningAmount;
+
                             } else {
                                 $winningAmount = 0;
                                 $winningText = "Leider verloren";
@@ -112,18 +130,26 @@
                             if($resultWheelNumber == $definedNumber){
                                 $winningAmount = $setAmountField * 14;
                                 $winningText = "gewonnen!";
+                                $rouletteWins += 1;
+                                $moneyWonRoulette += $winningAmount;
+
                             } else {
                                 $winningAmount = 0;
                                 $winningText = "Leider verloren";
                             }
                             
                         } else {
-                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss einen Betrag gesetzt werden!";
+                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss ein Betrag gesetzt werden!";
                         }
-                        //Update die Datenbank mit den neuen Werten
+
                         $resultCoins = $temporaryResult + $winningAmount;
-                        $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ? WHERE username = ?");
-                        $stmt->bind_param("is", $resultCoins, $username);
+
+                        //Update die Datenbank mit den neuen Werten beider Tabellen
+                        $stmt = $mysqli->prepare("UPDATE person INNER JOIN personstatistic p ON person.fk_statistic = p.ID
+                                                 SET person.IkarusCoins = ?, p.CountedRouletteGames = ?, 
+                                                 p.RouletteWins = ?, p.MoneyWonRoulette = ?,
+                                                 p.MoneySpentRoulette = ? WHERE username = ?");
+                        $stmt->bind_param("iiiiis", $resultCoins, $countedRouletteGames, $rouletteWins, $moneyWonRoulette, $moneySpentRoulette, $username);
                         $stmt->execute();
                         
                         $stmt->close();
