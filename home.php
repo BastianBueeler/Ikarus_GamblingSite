@@ -6,6 +6,30 @@
 
     //Wenn User eingeloggt ist.
     if(isset($_SESSION['logedin'])){
+
+        if (isset($_GET['feedback'])){
+            if($_GET['feedback'] == 'erfolg'){
+                if($_GET['status']){
+                    $message = 'Sie haben den Newsletter erfolgreich abonniert';
+                }else{
+                    $message = 'Sie haben den Newsletter erfolgreich deabonniert';
+                }
+                
+                echo '<script>';
+                echo 'alert("' . $message . '")';
+                echo '</script>';
+            }elseif($_GET['feedback'] == 'fehlgeschlagen'){
+                if($_GET['status']){
+                    $message = 'Etwas ist fehlgeschalgen beim abonnieren des Newsletter';
+                }else{
+                    $message = 'Etwas ist fehlgeschlagen beim deabonieren des Newsletter';
+                }
+                
+                echo '<script>';
+                echo 'alert("' . $message . '")';
+                echo '</script>';
+            }
+        }
         
         include("dbconnector.inc.php");
         include('setNewCoins.php');
@@ -13,7 +37,7 @@
         $username = $_SESSION['username'];
 
         //Datenbankabfrage der und anschliessendes setzen Ikaruscoins
-        $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
+        $stmt = $mysqli->prepare("SELECT IkarusCoins, AboNewsLetter FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 
         $stmt->execute();
@@ -24,6 +48,7 @@
             
             while($row = $result->fetch_assoc()){
                 $IkarusCoins = $row['IkarusCoins'];
+                $_SESSION['AboNewsLetter'] = $row['AboNewsLetter'];
             }
 
         }else{
@@ -70,6 +95,11 @@
                     //Wenn der Username nicht Admin ist, dann darf er sich löschen können.
                     if($isAdmin == 1){
                         echo "<a href='deleteUser.php' target='_self' class='dropdown-item'>Benutzer löschen</a>";
+                        if($_SESSION['AboNewsLetter']){
+                            echo "<a href='changeNewsLetterStatus.php' target='_self' class='dropdown-item'>Newsletter deabonnieren</a>";
+                        }else{
+                            echo "<a href='changeNewsLetterStatus.php' target='_self' class='dropdown-item'>Newsletter abonnieren</a>";
+                        }
                     }
                 ?>
             </div>
