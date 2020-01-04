@@ -1,5 +1,7 @@
 <?php
 
+    session_start();
+
     //Session ID wird neu gesetzt
     session_regenerate_id(true);
 
@@ -159,7 +161,7 @@
                 </div>
             </div>
 
-            <a href="#moneySpentBlackJack" class="btn btn-primary" data-toggle="collapse">ausgegebenes Geld BlackJack</a>
+            <a href="#moneySpentBlackJack" class="btn btn-primary secondLine" data-toggle="collapse">ausgegebenes Geld BlackJack</a>
             <div class="collapse" id="moneySpentBlackJack">
                 <div class="card card-body">
                 <?php 
@@ -171,7 +173,7 @@
                 </div>
             </div>
 
-            <a href="#moneySpentRoulette" class="btn btn-primary" data-toggle="collapse">ausgegebenes Geld Roulette</a>
+            <a href="#moneySpentRoulette" class="btn btn-primary secondLine" data-toggle="collapse">ausgegebenes Geld Roulette</a>
             <div class="collapse" id="moneySpentRoulette">
                 <div class="card card-body">
                 <?php 
