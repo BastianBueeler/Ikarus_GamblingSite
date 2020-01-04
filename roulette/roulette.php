@@ -1,6 +1,5 @@
 <?php
 
-    //
     session_start();
 
     //Die Session ID wird neu gesetzt
@@ -14,8 +13,6 @@
 
         $username = $_SESSION['username'];
         $error = "";
-
-        include('../setNewCoins.php');
 
         //Abfrage der Ikaruscoins
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
@@ -67,8 +64,10 @@
             }
 
             //Wenn Die Ikaruscoins kleines sind, als der Eingegebene Betrag gib echo aus, sonst führ den Rest aus.
-            if($IkarusCoins < $setAmountField){
-               $error = "Zu wenig Coins!";
+            if($IkarusCoins < $setAmountField || $setAmountField == 0){
+               $error = "Zu wenig Coins! <br> Gehe zur Startseite um dir neue zu holen.";
+            } elseif ($setAmountField < 0){
+                $error = "Es können keine negativen Einsätze getätigt werden!";
             } else {
 
                 $temporaryResult = $IkarusCoins - $setAmountField;
@@ -119,7 +118,7 @@
                             }
                             
                         } else {
-                            $error = "Es kann nur entweder Farbe oder Zahl ausgewählt werden und es muss einen Betrag gesetzt werden!";
+                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss einen Betrag gesetzt werden!";
                         }
                         //Update die Datenbank mit den neuen Werten
                         $resultCoins = $temporaryResult + $winningAmount;
@@ -283,9 +282,9 @@
 
             <div class="rouletteplayMenu pl-5 pr-5 pt-5 bg-secondary lead">
                 <form action="" method="post" id="form">
-                    <p class="text-white">Ihre Coins: <?php echo $IkarusCoins ?></p> 
+                    <p class="text-white">Deine Coins: <?php echo $IkarusCoins ?></p> 
                     <br/>
-                    <p class="text-white mb-0">Ihr Einsatz</p>
+                    <p class="text-white mb-0">Dein Einsatz</p>
                     <input class="w-100" id="setAmountField" name="setAmountField" type="number" min="0" max="9999999999999999999" required>
                     <br/>
 
