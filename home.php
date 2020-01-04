@@ -65,6 +65,7 @@
 
             <div class="dropdown-menu">
                 <a href="signOut.php" target="_self" class="dropdown-item">Benutzer abmelden</a>
+                <a href="changePassword.php" target="_self" class="dropdown-item">Passwort ändern</a>
                 <?php
                     //Wenn der Username nicht Admin ist, dann darf er sich löschen können.
                     if($isAdmin == 1){

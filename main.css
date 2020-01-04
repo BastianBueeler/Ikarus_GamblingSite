@@ -79,6 +79,18 @@ body{
     font-size: 30px;
 }
 
+/*Passwort ändern*/
+
+.changePasswordWindow{
+    border: solid black;
+    width: 30%;
+}
+
+.changePasswordWindowTitle{
+    border-bottom: solid black 3px;
+    font-size: 35px;
+}
+
 /*Black Jack*/
 
 #blackJackContent {
