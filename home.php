@@ -1,5 +1,6 @@
 <?php
 
+    session_start();
     //Session ID wird neu gesetzt
     session_regenerate_id(true);
 
@@ -97,7 +98,7 @@
             //Wenn der Username Admin ist, zeig auf Home ein weiters Feld an für die Statistik Seite.
             if($isAdmin == 0){
                 echo "<div class='row d-flex justify-content-start'>";
-                echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick='window.location='statistic.php';'>";
+                echo "<div class='boxStatistics border border-dark col-5 ml-5 mb-5 shadow rounded' onclick=\"window.location='statistic.php';\">";
                 echo "<p class='lead text-center font-weight-bold mt-5'>Statistiken</p>";
                 echo "</div>";
                 echo "</div>";

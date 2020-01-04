@@ -1,5 +1,8 @@
 <?php
 
+    //
+    session_start();
+
     //Die Session ID wird neu gesetzt
     session_regenerate_id(true);
 
