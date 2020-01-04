@@ -7,7 +7,7 @@
     if(isset($_SESSION['logedin'])){
 
         //DB Verbindung wird hergestellt
-        include("../dbconnector.inc.php");
+        include("dbconnector.inc.php");
 
         $username = $_SESSION['username'];
 
@@ -37,7 +37,7 @@
             $stmt->execute();
 
             echo '<script language="javascript">';
-            echo 'alert("Du bekommst 50 neue Coins, da du keine mehr hast.")';
+            echo 'alert("Sie bekommen 50 neue Coins, da Sie keine mehr haben.")';
             echo '</script>';
         }
 

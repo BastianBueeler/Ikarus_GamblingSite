@@ -8,6 +8,7 @@
     if(isset($_SESSION['logedin'])){
         
         include("dbconnector.inc.php");
+        include('setNewCoins.php');
 
         $username = $_SESSION['username'];
 
