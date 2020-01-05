@@ -11,7 +11,7 @@
 
         $username = $_SESSION['username'];
 
-        //Eine Abfrae der Coins des Users wird auf der Datenbank gemacht.
+        //Eine Abfrage der Coins des Users wird auf der Datenbank gemacht.
         $stmt = $mysqli->prepare("SELECT IkarusCoins FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 

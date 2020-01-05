@@ -196,7 +196,7 @@
                     <?php 
 
                         //Falls es Fehler gibt, ausgabe der Fehler
-                        if(isset($error)){
+                        if(!(empty($error))){
                             echo $error;
                         } else {
                             //Ausgabe des Ergebnis
