@@ -72,10 +72,15 @@
             }
 
             //Wenn Die Ikaruscoins kleines sind, als der Eingegebene Betrag gib echo aus, sonst führ den Rest aus.
-            if($IkarusCoins < $setAmountField || $setAmountField == 0){
-               $error = "Zu wenig Coins! <br> Gehe zur Startseite um dir neue zu holen.";
+            if ($IkarusCoins < $setAmountField){
+                if($IkarusCoins == 0){
+                    $error = "Zu wenig Coins! <br> Gehe zur Startseite um dir neue zu holen.";
+                } else {
+                    $error = "Es wurden mehr Coins gesetzt, als noch vorhanden sind!";
+                }
             } elseif ($setAmountField < 0){
                 $error = "Es können keine negativen Einsätze getätigt werden!";
+            
             } else {
 
                 $temporaryResult = $IkarusCoins - $setAmountField;
@@ -83,9 +88,6 @@
                 //Wenn im Cookie winingNumber existiert, fahr weiter
                 if(isset($_COOKIE["winningNumber"])){
                     if($_COOKIE["winningNumber"] != NULL){
-                
-                        $countedRouletteGames += 1;
-                        $moneySpentRoulette += $setAmountField;
 
                         $resultWheelNumber = $_COOKIE["winningNumber"];
                         $winningAmount = 0;
@@ -139,22 +141,27 @@
                             }
                             
                         } else {
-                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss ein Betrag gesetzt werden!";
+                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss ein positiver Betrag gesetzt werden!";
                         }
 
-                        $resultCoins = $temporaryResult + $winningAmount;
+                        if(empty($error)){
+                            $countedRouletteGames += 1;
+                            $moneySpentRoulette += $setAmountField;
 
-                        //Update die Datenbank mit den neuen Werten beider Tabellen
-                        $stmt = $mysqli->prepare("UPDATE person INNER JOIN personstatistic p ON person.fk_statistic = p.ID
-                                                 SET person.IkarusCoins = ?, p.CountedRouletteGames = ?, 
-                                                 p.RouletteWins = ?, p.MoneyWonRoulette = ?,
-                                                 p.MoneySpentRoulette = ? WHERE username = ?");
-                        $stmt->bind_param("iiiiis", $resultCoins, $countedRouletteGames, $rouletteWins, $moneyWonRoulette, $moneySpentRoulette, $username);
-                        $stmt->execute();
-                        
-                        $stmt->close();
-                        $mysqli->close();
-                        $IkarusCoins = $resultCoins;
+                            $resultCoins = $temporaryResult + $winningAmount;
+
+                            //Update die Datenbank mit den neuen Werten beider Tabellen
+                            $stmt = $mysqli->prepare("UPDATE person INNER JOIN personstatistic p ON person.fk_statistic = p.ID
+                                                    SET person.IkarusCoins = ?, p.CountedRouletteGames = ?, 
+                                                    p.RouletteWins = ?, p.MoneyWonRoulette = ?,
+                                                    p.MoneySpentRoulette = ? WHERE username = ?");
+                            $stmt->bind_param("iiiiis", $resultCoins, $countedRouletteGames, $rouletteWins, $moneyWonRoulette, $moneySpentRoulette, $username);
+                            $stmt->execute();
+                            
+                            $stmt->close();
+                            $mysqli->close();
+                            $IkarusCoins = $resultCoins;
+                        }
 
                         setcookie("winningNumber", NULL);
                     }
@@ -187,23 +194,25 @@
 
                 <p class="text-black resultText"> 
                     <?php 
-                    //Ausgabe des Ergebnis
-                        if(isset($resultWheelNumber) && $color !== null){
-                            echo "Ergebnis: " . $resultColor . '<br>';
-                            echo"Sie haben " . $winningText;
 
-                        } elseif(isset($resultWheelNumber) && $definedNumber !== null){
-                            echo "Ergebnis: " . $resultWheelNumber . '<br>';
-                            echo "Sie haben " . $winningText;
-                            
-                        } else {
-                            echo "";
-                        } 
-                    
                         //Falls es Fehler gibt, ausgabe der Fehler
                         if(isset($error)){
                             echo $error;
+                        } else {
+                            //Ausgabe des Ergebnis
+                            if(isset($resultWheelNumber) && $color !== null){
+                                echo "Ergebnis: " . $resultColor . '<br>';
+                                echo"Sie haben " . $winningText;
+
+                            } elseif(isset($resultWheelNumber) && $definedNumber !== null){
+                                echo "Ergebnis: " . $resultWheelNumber . '<br>';
+                                echo "Sie haben " . $winningText;
+                                
+                            } else {
+                                echo "";
+                            } 
                         }
+                    
                     ?>
                 </p> 
                 <div class="rouletteWheelBody d-flex flex-column">
