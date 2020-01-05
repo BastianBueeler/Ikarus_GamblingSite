@@ -74,13 +74,13 @@
             //Wenn Die Ikaruscoins kleines sind, als der Eingegebene Betrag gib echo aus, sonst führ den Rest aus.
             if ($IkarusCoins < $setAmountField){
                 if($IkarusCoins == 0){
-                    $error = "Zu wenig Coins! <br> Gehe zur Startseite um dir neue zu holen.";
+                    include("../setNewCoins.php");
+                    $error = "Zu wenig Coins!";
                 } else {
                     $error = "Es wurden mehr Coins gesetzt, als noch vorhanden sind!";
                 }
             } elseif ($setAmountField < 0){
                 $error = "Es können keine negativen Einsätze getätigt werden!";
-            
             } else {
 
                 $temporaryResult = $IkarusCoins - $setAmountField;
@@ -141,7 +141,10 @@
                             }
                             
                         } else {
-                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss ein positiver Betrag gesetzt werden!";
+                            if($IkarusCoins == 0){
+                                include("../setNewCoins.php");
+                            }
+                            $error = "Es kann nur entweder eine Farbe oder eine Zahl zwischen 0 und 20 ausgewählt werden. Zudem muss ein Betrag gesetzt werden!";
                         }
 
                         if(empty($error)){
