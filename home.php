@@ -7,24 +7,27 @@
     //Wenn User eingeloggt ist.
     if(isset($_SESSION['logedin'])){
 
-        if (isset($_GET['feedback'])){
-            if($_GET['feedback'] == 'erfolg'){
-                if($_GET['status']){
+        //überprüfen ob der status des Newsletter-abo geändert wurde
+        if (isset($_GET['NewsLetterfeedback'])){
+            if($_GET['NewsLetterfeedback'] == 'erfolg'){
+                if($_GET['NewsLetterstatus']){
                     $message = 'Sie haben den Newsletter erfolgreich abonniert';
                 }else{
                     $message = 'Sie haben den Newsletter erfolgreich deabonniert';
                 }
                 
+                //rückmeldung an den user bezüglich dem ändern des NewsLetter-abo
                 echo '<script>';
                 echo 'alert("' . $message . '")';
                 echo '</script>';
-            }elseif($_GET['feedback'] == 'fehlgeschlagen'){
-                if($_GET['status']){
+            }elseif($_GET['NewsLetterfeedback'] == 'fehlgeschlagen'){
+                if($_GET['NewsLetterstatus']){
                     $message = 'Etwas ist fehlgeschalgen beim abonnieren des Newsletter';
                 }else{
                     $message = 'Etwas ist fehlgeschlagen beim deabonieren des Newsletter';
                 }
                 
+                //rückmeldung an den user bezüglich dem ändern des NewsLetter-abo
                 echo '<script>';
                 echo 'alert("' . $message . '")';
                 echo '</script>';
@@ -36,7 +39,7 @@
 
         $username = $_SESSION['username'];
 
-        //Datenbankabfrage der und anschliessendes setzen Ikaruscoins
+        //Datenbankabfrage der und anschliessendes setzen der Ikaruscoins und dem status des Newsletter-abo
         $stmt = $mysqli->prepare("SELECT IkarusCoins, AboNewsLetter FROM person WHERE username = ?");
         $stmt->bind_param("s", $username);
 
@@ -92,9 +95,10 @@
                 <a href="signOut.php" target="_self" class="dropdown-item">Benutzer abmelden</a>
                 <a href="changePassword.php" target="_self" class="dropdown-item">Passwort ändern</a>
                 <?php
-                    //Wenn der Username nicht Admin ist, dann darf er sich löschen können.
+                    //Wenn der Username Admin ist, dann darf er sich löschen können und wird nicht nach einem newsletter-abo gefragt.
                     if($isAdmin == 1){
                         echo "<a href='deleteUser.php' target='_self' class='dropdown-item'>Benutzer löschen</a>";
+                        //überprüfen ob newsletter abonniert ist
                         if($_SESSION['AboNewsLetter']){
                             echo "<a href='changeNewsLetterStatus.php' target='_self' class='dropdown-item'>Newsletter deabonnieren</a>";
                         }else{

@@ -5,9 +5,12 @@
 
     if(isset($_SESSION['logedin'])){
         
+        //session leeren und löschen
+
         $_SESSION = array();
         session_destroy();
         
+        //user zurück auf login seite führen
         header("Location: http://localhost/Ikarus_GamblingSite/userlogin.php");
 
     }else{

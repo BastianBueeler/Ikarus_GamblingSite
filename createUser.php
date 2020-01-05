@@ -1,13 +1,18 @@
 <?php
-
+  //DB connection öffnen
   include("dbconnector.inc.php");
 
+  //session starten und neue id erstellen
   session_start();
   session_regenerate_id(true);
 
   $name = $prename = $username = $email = $pattern = $passwordAgain = $error = ""; 
 
+  //überprüfen ob parameter mit der POST methode übergeben wurden
   if($_SERVER['REQUEST_METHOD'] == "POST"){
+
+    //vallidierung der übergebenen parametern und aufbereichten für db insert (htmltags und space vor und danach entfernen)
+
     if(isset($_POST['name']) && !empty(trim($_POST['name'])) && strlen(trim($_POST['name'])) <= 30) {
       $name = htmlspecialchars(trim($_POST['name']));
     } else {
@@ -31,9 +36,10 @@
     } else {
       $error .= "Die Eingabe der E-Mail Adresse ist nicht korrekt!! "; 
     }
-      
+    
+    //pattern für das passwort
     $pattern = '/(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/';
-
+    
     if(isset($_POST['password']) && preg_match($pattern, $_POST['password']) && strlen(trim($_POST['password'])) <= 30){
       $password = htmlspecialchars(trim($_POST['password']));
     } else {
@@ -46,12 +52,15 @@
       $error .= "Die zweite Eingabe des Passwortes ist nicht korrekt!! ";
     }
 
+    //überprüfen ob die zwei passwort angaben gleich sind, sonst fehlermeldung schreiben
     if(strcmp($password, $passwordAgain) !== 0){
       $error .= "Die zwei Passwörter sind nicht gleich!! ";
     }
 
+    //falls es keine fehler gab
     if(empty($error)){
 
+      //überprüfen ob es diesen Usernamen bereits gibt
       $sql = "SELECT username FROM person";
       $result = $mysqli->query($sql);
 
@@ -63,7 +72,10 @@
         }
       }
 
+      //falls es keine fehler gab
       if(empty($error)){
+
+        //daten in die tabelle statistic und person hinzufügen
 
         $_SESSION['username'] = $username;
         $_SESSION['logedin'] = TRUE;
@@ -84,7 +96,8 @@
           }
 
           $IkarusCoins = 50;
-
+          
+          //passwort hashen
           $password = password_hash($password, PASSWORD_DEFAULT);
         
           $stmt = $mysqli->prepare("INSERT INTO person (Username, fk_statistic, Password, EMail, Name, Prename, IkarusCoins) VALUES ( ?, ?, ?, ?, ?, ?, ? )");
@@ -95,7 +108,8 @@
 
           $stmt->close();
           $mysqli->close();
-  
+          
+          //user auf die neue seite leiten
           header("Location: http://localhost/Ikarus_GamblingSite/home.php");
 
         }

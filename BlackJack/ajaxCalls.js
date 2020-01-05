@@ -1,3 +1,4 @@
+//element von html seite holen
 var setIkarusCoinsBtn = document.getElementById("setIkarusCoins");
 var takeCardBtn = document.getElementById("takeCard");
 var takeNoCardBtn = document.getElementById("takeNoCards");
@@ -15,7 +16,7 @@ var promiseGetEndOfGameInfo;
 takeCardBtn.disabled = true;
 takeNoCardBtn.disabled = true;
 
-
+//Anzahl IkarusCoins abfragen (backend call)
 var request = new XMLHttpRequest();
 var url = 'ajaxCallHandler.php';
 request.open('POST', url, true);
@@ -31,23 +32,28 @@ request.onload = function(){
 var params = 'function=getBankAmount';
 request.send(params);
 
+//funktion zum anzeigen des IkarusCoins-Vermögen auf frontend
 function setFortune(fortune){
 
     myFortune.innerHTML = 'Sie besitzen ' + fortune + ' IkarusCoins';
     
 }
 
+//aktionLister für "setzen" button
 setIkarusCoinsBtn.addEventListener("click", function(){
+    
+    //vallidierung der benutzereingabe (wetteinsatz)
     if(myBet.innerHTML == ''){
-        var request = new XMLHttpRequest();
-        var url = 'ajaxCallHandler.php';
-        request.open('POST', url, true);
-        request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
         var inputIkarusCoins = document.getElementById("amountIkarusCoins").value;
 
         if(inputIkarusCoins != '' && Math.sign(inputIkarusCoins) != "-1"){
             if(inputIkarusCoins % 2 == 0){
+
+                //Einsatz vom vermögen abziegen und die ersten vier karten ziehen (backend call)
+                var request = new XMLHttpRequest();
+                var url = 'ajaxCallHandler.php';
+                request.open('POST', url, true);
+                request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 var params = 'function=setIkarusCoins&value=' + inputIkarusCoins;   
         
                 request.onload = function() {
@@ -88,8 +94,10 @@ setIkarusCoinsBtn.addEventListener("click", function(){
     }
 });
 
-
+//aktionlistener für "karte ziehen" button
 takeCardBtn.addEventListener("click", function(){
+    
+    //karte ziehen (backend call)
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';
     request.open('POST', url, true);
@@ -118,7 +126,10 @@ takeCardBtn.addEventListener("click", function(){
     
 });
 
+//karten ziehen für den dealer
 function playDealer(){
+
+    //karte ziehen (backend call)
     var takeCardAgain;
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';
@@ -159,6 +170,9 @@ function playDealer(){
     request.send(params);
 
     setTimeout(function(){
+        //falls player keine karten mehr ziehen will
+        //dealer muss so lange karten ziehen bis er mindestens 17 hat
+        //mit diesem promis teile ich mit ob dealer nochmals eine karte ziehen muss
         promiseDealerTakeCard = new Promise(
             function (resolve, reject) {
                 if(takeCardAgain){
@@ -171,12 +185,14 @@ function playDealer(){
     }, 2000);
 }
 
+//aktionlisterner für "keine karten mehr ziehen" button
 takeNoCardBtn.addEventListener("click", function(){
     takeCardBtn.disabled = true;
     takeNoCardBtn.disabled = true;
     fillDealerCardsWorthUntil17();
 });
 
+//dealer zieht karten bis er mindestens einen kartenwert von 17 hat
 function fillDealerCardsWorthUntil17(){
     playDealer();
     
@@ -191,7 +207,10 @@ function fillDealerCardsWorthUntil17(){
     }, 2000);
 }
 
+//überprüfen wer gewonnen hat
 function whoWon(){
+
+    //überprüfen wer gewonnen hat (backend call)
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';
     request.open('POST', url, true);
@@ -217,7 +236,9 @@ function whoWon(){
     request.send(params);
 }
 
+//falls spieler gewonnen hat, einsatz multiplizieren
 function multiplyBet(){
+    //einsatz multiplizieren (backend call)
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';
     request.open('POST', url, true);
@@ -234,7 +255,9 @@ function multiplyBet(){
     request.send(params);   
 }
 
+//falls unentschieden, einsatz zurück erhalten
 function draw(){
+    //einsatz zurück erhalten (backend call)
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';
     request.open('POST', url, true);
@@ -251,7 +274,7 @@ function draw(){
     request.send(params);
 }
 
-
+//karte auf frontend setzen
 function setCard(person, card){
 
     var htmlString = '<img src="cardsImg/' + card + '.png" height="100%" width="160 class="cards>';
@@ -263,6 +286,7 @@ function setCard(person, card){
     }    
 }
 
+//anzeigen wer gewonnen hat
 function displayWinner(winner){
     var winnerString;
     var endOfGameInfo;
@@ -304,6 +328,7 @@ function displayWinner(winner){
 
 }
 
+//informationen über das ende des spieles holen
 function getEndOfGameInfo(winner){
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';

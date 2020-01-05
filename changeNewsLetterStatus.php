@@ -4,7 +4,8 @@
     session_regenerate_id(true);
 
     if(isset($_SESSION['logedin'])){
-
+        
+        //überprüfen ob newsletter abonniert ist oder nicht und status ändern
         if($_SESSION['AboNewsLetter']){
 
             $newStatus = false;
@@ -17,6 +18,7 @@
 
         include("dbconnector.inc.php");
 
+        //der neue status zum abo des newsletter in db schreiben
         $stmt = $mysqli->prepare("UPDATE person SET AboNewsLetter = ? WHERE username = ?");
 
         $username = $_SESSION['username'];
@@ -29,7 +31,8 @@
             $feedback = "fehlgeschlagen";
         }
 
-        header("Location: home.php?feedback=$feedback&status=$newStatus");
+        //user zurück auf home seite führen mit rückmeldung
+        header("Location: home.php?NewsLetterfeedback=$feedback&NewsLetterstatus=$newStatus");
     }else{
         header("Location: userlogin.php");
     }

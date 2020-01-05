@@ -9,8 +9,10 @@
 
         if($_SERVER['REQUEST_METHOD'] == "POST"){
             
+            //pattern für das passwort
             $pattern = '/(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/';
 
+            //eingaben vallidieren und und variable schreiben, ohne htmltags und space vor oder danach
             if(isset($_POST['password']) && preg_match($pattern, $_POST['password']) && strlen(trim($_POST['password'])) <= 30){
               $password = htmlspecialchars(trim($_POST['password']));
             } else {
@@ -22,10 +24,12 @@
             } else {
               $error .= "Die zweite Eingabe des Passwortes ist nicht korrekt!! ";
             }
-        
+            
+            //überprüfen ob beide angegebenen passwörter gleich sind
             if(strcmp($password, $passwordAgain) !== 0){
               $error .= "Die zwei Passwörter sind nicht gleich!! ";
             }else{
+                //neuse passwort gehasht in db schreiben
                 include("dbconnector.inc.php");
 
                 $password = password_hash($password, PASSWORD_DEFAULT);

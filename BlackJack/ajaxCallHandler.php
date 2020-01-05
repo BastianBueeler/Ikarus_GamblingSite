@@ -15,6 +15,7 @@ if(isset($_POST['function'])){
         $username = $_SESSION['username'];
         $amount = $_POST['value'];
 
+        //erlaubnis von einsatz abfragen und im db schreiben
         $betPremission = $logic->setAmount($amount, $bankAmount, $username); 
 
         if($betPremission['premission']){
@@ -25,6 +26,7 @@ if(isset($_POST['function'])){
             $cardsDealer = [];
             $cardsPlayer = [];
             
+            //methode aufrufen für karten ziehen
             $currentStatusOfCards = $logic->getCard($cards, $cardsDealer);
             array_push($cards, $currentStatusOfCards['card']);
             array_push($cardsDealer, $currentStatusOfCards['card']);
@@ -45,24 +47,29 @@ if(isset($_POST['function'])){
 
             $playerAmount = $currentStatusOfCards['cardsWorth'];
             
+            //alle gezogenen karten speichern
             $_SESSION['takenCards'] = $cards;
 
+            //gezogenen karten von dealer und player getrennt speichern
             $_SESSION['takenCardsOfDealer'] = $cardsDealer;
             $_SESSION['takenCardsOfPlayer'] = $cardsPlayer;
 
+            //karten wert von player und dealer speichern
             $_SESSION['dealerCardsWorth'] = $dealerAmount;
             $_SESSION['playerCardsWorth'] = $playerAmount;
 
+            //überprüfen ob jemand gewonnen hat
             if($playerAmount == 21 || $dealerAmount == 21){
                 $winner = true;
             }else{
                 $winner = false;
             }
 
+            //array mit wichtigen daten erstellen
             $return = array( "premission" => $betPremission['premission'], "newBankAmount" => $betPremission['newBankAmount'], "dealerCards" => $cardsDealer, "playerCards" => $cardsPlayer, "winner" => $winner, "dealer" => $dealerAmount, "player" => $playerAmount);
 
         }else{
-
+            //array mit wichtigen daten erstellen
             $return = array("premission" => $betPremission['premission']);
 
         }
@@ -70,7 +77,7 @@ if(isset($_POST['function'])){
         $arr = array($return);
 
         $json = json_encode($arr);
-
+        //array mit wichtigen zurückgeben
         echo $json;
 
     }elseif($_POST['function'] === 'takeCard'){
@@ -81,6 +88,8 @@ if(isset($_POST['function'])){
         session_regenerate_id(true);
 
         $cards = $_SESSION['takenCards'];
+
+        //überprüfen wer zieht eine karte
         if($_POST['person'] == 'player'){
             $takenCardsOfPerson = $_SESSION['takenCardsOfPlayer'];
         }elseif($_POST['person'] == 'dealer'){
@@ -89,13 +98,16 @@ if(isset($_POST['function'])){
 
         $dealerAmount = $_SESSION['dealerCardsWorth'];
 
+        //überprüfen ob dealer noch eine karte darf ziehen
         if($_POST['person'] == 'dealer' && $dealerAmount < 17 || $_POST['person'] == 'player'){
 
+            //karte ziehen und neue werte speichern
             $currentStatusOfCards = $logic->getCard($cards, $takenCardsOfPerson);
 
             $card = $currentStatusOfCards['card'];
             $cardsWorth = $currentStatusOfCards['cardsWorth'];
 
+            //überprüfen ob man gewonnen oder verlogen hat
             if($cardsWorth > 21){
                 $loser = true;
                 $winner = false;
@@ -110,6 +122,8 @@ if(isset($_POST['function'])){
             array_push($cards, $card);
             $_SESSION['takenCards'] = $cards;
 
+            //gezogenen karten von dealer oder player speichern
+            //karten wert von player oder dealer speichern
             if($_POST['person'] == 'player'){
                 $_SESSION['playerCardsWorth'] = $cardsWorth;
                 
@@ -125,10 +139,12 @@ if(isset($_POST['function'])){
                 $_SESSION['takenCardsOfDealer'] = $cardsDealer;
             }
 
+             //array mit wichtigen daten erstellen
             $return = array("card" => $card, "canDealerTakeCard" => true, "winner" => $winner, "loser" => $loser);
 
         }else{
 
+             //array mit wichtigen daten erstellen
             $return = array("canDealerTakeCard" => false);
 
         }
@@ -137,10 +153,12 @@ if(isset($_POST['function'])){
 
         $json = json_encode($arr);
 
+        //array mit wichtigen zurückgeben
         echo $json;
 
     }elseif($_POST['function'] === 'getBankAmount'){
 
+        //Ikaruscoins vermögen abfragen und speichern und zurück geben
         session_start();
         session_regenerate_id(true);
 
@@ -155,7 +173,8 @@ if(isset($_POST['function'])){
         echo $bankAmount;
 
     }elseif($_POST['function'] === 'whoWon'){
-        
+        //überprüfen wer gewonnen hat
+
         session_start();
         session_regenerate_id(true);
 
@@ -182,6 +201,7 @@ if(isset($_POST['function'])){
         $bankAmount = $_SESSION['bankAmount'];
         $username = $_SESSION['username'];
 
+        //schauen mit was einsatz multiplitziert wird (blackjack gibt höherer multiplikator)
         if($_SESSION['playerCardsWorth'] == 21){
 
             $bankStatement = $logic->multiplyBet(2.5, $bet, $bankAmount, $username);
@@ -195,9 +215,11 @@ if(isset($_POST['function'])){
         $_SESSION['bankAmount'] = $bankStatement['newBankAmount'];
         $_SESSION['moneyGetBack'] = $bankStatement['moneyGetBack'];
         
+        //neues vermögen zurückgeben
         echo $bankStatement['newBankAmount'];
 
     }elseif($_POST['function'] == 'getBetBack'){
+        //für unentschieden, den einsatz zurück erhalten
 
         session_start();
         session_regenerate_id(true);
@@ -213,10 +235,12 @@ if(isset($_POST['function'])){
         $_SESSION['bankAmount'] = $bankStatement['newBankAmount'];
         $_SESSION['moneyGetBack'] = $bankStatement['moneyGetBack'];
 
+        //neues vermögen zurückgeben
         echo $bankStatement['newBankAmount'];
 
     }elseif($_POST['function'] == 'getEndOfGameInfo'){
-        
+        //informationen über das spielende sammeln und zurückgeben
+
         session_start();
         session_regenerate_id(true);
 
