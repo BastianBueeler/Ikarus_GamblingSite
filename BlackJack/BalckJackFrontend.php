@@ -1,3 +1,16 @@
+<?php
+
+    session_start();
+    //Session ID wird neu gesetzt
+    session_regenerate_id(true);
+
+    //Wenn User eingeloggt ist.
+    if(isset($_SESSION['logedin'])){
+        //falls user keine ikaruscoins mehr hat, werden ihm 50 pro tag gegeben
+        include("../setNewCoins.php");
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
