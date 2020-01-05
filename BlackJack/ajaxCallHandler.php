@@ -22,41 +22,36 @@ if(isset($_POST['function'])){
             $_SESSION['inputIkarusCoins'] = $amount;
 
             $cards = [];
+            $cardsDealer = [];
+            $cardsPlayer = [];
             
-            $currentStatusOfCards = $logic->getCard($cards, 0);
+            $currentStatusOfCards = $logic->getCard($cards, $cardsDealer);
             array_push($cards, $currentStatusOfCards['card']);
+            array_push($cardsDealer, $currentStatusOfCards['card']);
 
-            $cardsWorthDealer = $currentStatusOfCards['cardsWorth'];
-
-            $currentStatusOfCards = $logic->getCard($cards, $cardsWorthDealer);
+            $currentStatusOfCards = $logic->getCard($cards, $cardsDealer);
             array_push($cards, $currentStatusOfCards['card']);
+            array_push($cardsDealer, $currentStatusOfCards['card']);
 
-            $_SESSION['dealerCardsWorth'] = $currentStatusOfCards['cardsWorth'];
+            $dealerAmount = $currentStatusOfCards['cardsWorth'];
 
-            $currentStatusOfCards = $logic->getCard($cards, 0);
+            $currentStatusOfCards = $logic->getCard($cards, $cardsPlayer);
             array_push($cards, $currentStatusOfCards['card']);
+            array_push($cardsPlayer, $currentStatusOfCards['card']);
 
-            $cardsWorthPlayer = $currentStatusOfCards['cardsWorth'];
-
-            $currentStatusOfCards = $logic->getCard($cards, $cardsWorthPlayer);
+            $currentStatusOfCards = $logic->getCard($cards, $cardsPlayer);
             array_push($cards, $currentStatusOfCards['card']);
+            array_push($cardsPlayer, $currentStatusOfCards['card']);
 
-            $_SESSION['playerCardsWorth'] = $currentStatusOfCards['cardsWorth'];
-
-            $dealerCards = [
-                $cards[0],
-                $cards[1],
-            ];
-
-            $playerCards = [
-                $cards[2],
-                $cards[3],
-            ];
+            $playerAmount = $currentStatusOfCards['cardsWorth'];
             
             $_SESSION['takenCards'] = $cards;
-            
-            $playerAmount = $_SESSION['playerCardsWorth'];
-            $dealerAmount = $_SESSION['dealerCardsWorth'];
+
+            $_SESSION['takenCardsOfDealer'] = $cardsDealer;
+            $_SESSION['takenCardsOfPlayer'] = $cardsPlayer;
+
+            $_SESSION['dealerCardsWorth'] = $dealerAmount;
+            $_SESSION['playerCardsWorth'] = $playerAmount;
 
             if($playerAmount == 21 || $dealerAmount == 21){
                 $winner = true;
@@ -64,7 +59,7 @@ if(isset($_POST['function'])){
                 $winner = false;
             }
 
-            $return = array( "premission" => $betPremission['premission'], "newBankAmount" => $betPremission['newBankAmount'], "dealerCards" => $dealerCards, "playerCards" => $playerCards, "winner" => $winner);
+            $return = array( "premission" => $betPremission['premission'], "newBankAmount" => $betPremission['newBankAmount'], "dealerCards" => $cardsDealer, "playerCards" => $cardsPlayer, "winner" => $winner, "dealer" => $dealerAmount, "player" => $playerAmount);
 
         }else{
 
@@ -87,14 +82,16 @@ if(isset($_POST['function'])){
 
         $cards = $_SESSION['takenCards'];
         if($_POST['person'] == 'player'){
-            $amount = $_SESSION['playerCardsWorth'];
+            $takenCardsOfPerson = $_SESSION['takenCardsOfPlayer'];
         }elseif($_POST['person'] == 'dealer'){
-            $amount = $_SESSION['dealerCardsWorth'];
+            $takenCardsOfPerson = $_SESSION['takenCardsOfDealer'];
         }
 
-        if($_POST['person'] == 'dealer' && $amount < 17 || $_POST['person'] == 'player'){
+        $dealerAmount = $_SESSION['dealerCardsWorth'];
 
-            $currentStatusOfCards = $logic->getCard($cards, $amount);
+        if($_POST['person'] == 'dealer' && $dealerAmount < 17 || $_POST['person'] == 'player'){
+
+            $currentStatusOfCards = $logic->getCard($cards, $takenCardsOfPerson);
 
             $card = $currentStatusOfCards['card'];
             $cardsWorth = $currentStatusOfCards['cardsWorth'];
@@ -115,8 +112,17 @@ if(isset($_POST['function'])){
 
             if($_POST['person'] == 'player'){
                 $_SESSION['playerCardsWorth'] = $cardsWorth;
+                
+                $cardsPlayer = $_SESSION['takenCardsOfPlayer'];
+                array_push($cardsPlayer, $card);
+                $_SESSION['takenCardsOfPlayer'] = $cardsPlayer;
+
             }elseif($_POST['person'] == 'dealer'){
                 $_SESSION['dealerCardsWorth'] = $cardsWorth;
+
+                $cardsDealer = $_SESSION['takenCardsOfDealer'];
+                array_push($cardsDealer, $card);
+                $_SESSION['takenCardsOfDealer'] = $cardsDealer;
             }
 
             $return = array("card" => $card, "canDealerTakeCard" => true, "winner" => $winner, "loser" => $loser);

@@ -54,7 +54,7 @@ class BlackJackGame{
         return $bankAmount;
     }
 
-    function getCard($takenCards, $cardsWorth){
+    function getCard($takenCards, $cardsOfPerson){
         
         $cardsValuesArray = [
             "2",
@@ -95,17 +95,7 @@ class BlackJackGame{
             }
         }while($goOn);
 
-        if($randCardValue > 7 && $randCardValue < 12){
-            $cardsWorth += 10;
-        }elseif($randCardValue == 12){
-            $cardsWorth += 11;
-            if($cardsWorth > 21){
-                $cardsWorth -= 11;
-                $cardsWorth += 1;
-            }
-        }else{
-            $cardsWorth += $randCardValue + 2;
-        }
+        $cardsWorth = $this->addUpCards($cardsOfPerson, $card);
 
         $currentStatusOfCards = [
             "card"       => $card,
@@ -113,6 +103,77 @@ class BlackJackGame{
         ];
 
         return $currentStatusOfCards;
+    }
+
+    function addUpCards($cards, $currentlyTakenCard){
+
+        $cardsWorth = $this->getWorthOfCardValue($currentlyTakenCard);
+
+        foreach($cards as &$card){
+            $cardsWorth += $this->getWorthOfCardValue($card);
+        }
+
+        if($cardsWorth > 21){
+            foreach($cards as &$card){
+                if(strpos($card, 'Ass') >= 0){
+                    $amountOfAss += 1;
+                }
+            }
+
+            for($i = 1; $i <= $amountOfAss; $i++){
+                $cardsWorth -= 10;
+                if($cardsWorth <= 21){
+                    continue;
+                }
+            }
+        }
+        return $cardsWorth;
+    }
+
+    function getWorthOfCardValue($card){
+
+        switch(true){
+            case strpos($card, '2'):
+                $cardWorth = 2;
+                break;
+            case strpos($card, '3'):
+                $cardWorth = 3;
+                break;
+            case strpos($card, '4'):
+                $cardWorth = 4;
+                break;
+            case strpos($card, '5'):
+                $cardWorth = 5;
+                break;
+            case strpos($card, '6'):
+                $cardWorth = 6;
+                break;
+            case strpos($card, '7'):
+                $cardWorth = 7;
+                break;
+            case strpos($card, '8'):
+                $cardWorth = 8;
+                break;
+            case strpos($card, '9'):
+                $cardWorth = 9;
+                break;
+            case strpos($card, '10'):
+                $cardWorth = 10;
+                break;
+            case strpos($card, 'Bauer'):
+                $cardWorth = 10;
+                break;
+            case strpos($card, 'Königin'):
+                $cardWorth = 10;
+                break;
+            case strpos($card, 'König'):
+                $cardWorth = 10;
+                break;
+            case strpos($card, 'Ass'):
+                $cardWorth = 11;
+                break;   
+        }
+        return $cardWorth; 
     }
 
     function multiplyBet($multiplier, $bet, $bankAmount, $username){

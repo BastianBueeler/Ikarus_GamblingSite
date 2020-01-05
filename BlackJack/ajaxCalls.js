@@ -192,7 +192,6 @@ function fillDealerCardsWorthUntil17(){
 }
 
 function whoWon(){
-
     var request = new XMLHttpRequest();
     var url = 'ajaxCallHandler.php';
     request.open('POST', url, true);
