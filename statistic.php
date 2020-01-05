@@ -69,7 +69,7 @@
             header("Location: home.php");
         } 
     } else {
-        header("Location: home.php");
+        header("Location: userlogin.php");
     }
 ?>
 

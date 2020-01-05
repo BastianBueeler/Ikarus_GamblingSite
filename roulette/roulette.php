@@ -171,6 +171,8 @@
                 }
             }
         } 
+    } else {
+        header("Location: ../userlogin.php");
     }
 ?>
 
