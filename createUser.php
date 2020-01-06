@@ -110,7 +110,7 @@
           $mysqli->close();
           
           //user auf die neue seite leiten
-          header("Location: http://localhost/Ikarus_GamblingSite/home.php");
+          header("Location: home.php");
 
         }
       }

@@ -68,6 +68,9 @@ if(isset($_POST['function'])){
             //array mit wichtigen daten erstellen
             $return = array( "premission" => $betPremission['premission'], "newBankAmount" => $betPremission['newBankAmount'], "dealerCards" => $cardsDealer, "playerCards" => $cardsPlayer, "winner" => $winner, "dealer" => $dealerAmount, "player" => $playerAmount);
 
+            $logic->addOneToCountedBlackJackGames($username);
+            $logic->addMoneyToMoneySpent($amount, $username);
+
         }else{
             //array mit wichtigen daten erstellen
             $return = array("premission" => $betPremission['premission']);
@@ -241,6 +244,8 @@ if(isset($_POST['function'])){
     }elseif($_POST['function'] == 'getEndOfGameInfo'){
         //informationen über das spielende sammeln und zurückgeben
 
+        $logic = new BlackJackGame;
+
         session_start();
         session_regenerate_id(true);
 
@@ -264,6 +269,9 @@ if(isset($_POST['function'])){
                 'moneyGetBack'     => $_SESSION['moneyGetBack'],
             ];
 
+            $logic->addOneToBlackJackWins($_SESSION['username']);
+            $logic->addMoneyToMoneyWon($_SESSION['moneyGetBack'], $_SESSION['username']);
+
         }elseif($_POST['draw'] == 'draw'){
 
             $return =[
@@ -274,6 +282,7 @@ if(isset($_POST['function'])){
                 'moneyGetBack'     => $_SESSION['moneyGetBack'],
             ];
 
+            $logic->addMoneyToMoneyWon($_SESSION['moneyGetBack'], $_SESSION['username']);
         }
 
         $arr = array($return);

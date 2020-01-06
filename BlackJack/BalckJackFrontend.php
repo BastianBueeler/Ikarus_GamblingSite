@@ -23,7 +23,7 @@
     <body>
         <div class="bg-dark d-flex align-items-center justify-content-between header">
                 <p class="m-4 text-white font-weight-bold">IKARUS</p>
-                <a href="http://localhost/Ikarus_GamblingSite/home.php"><button type="submit" class="btn btn-secondary mr-4">Zurück</button></a>
+                <a href="../home.php"><button type="submit" class="btn btn-secondary mr-4">Zurück</button></a>
         </div>
 
         <div class="d-flex align-items-center justify-content-center" id="blackJackContent">

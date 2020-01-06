@@ -315,7 +315,7 @@ function displayWinner(winner){
                 
                 htmlString += '<p class="display-4" style="width:100%; text-align: center;">' + winnerString + '</p></br>';
                 htmlString += endOfGameInfo;
-                htmlString += '<a href="BalckJackFrontend.php" style="margin-bottom: 10px;"><button style="margin-bottom: 10px; margin-left: 5%; margin-right: 5%; width: 90%" class="btn btn-secondary mt-5">Nochmals</button></a></div>';
+                htmlString += '<a href="BalckJackFrontend.php" style="margin-bottom: 10px;"><button style="margin-bottom: 10px; margin-left: 5%; margin-right: 5%; width: 90%" class="btn btn-secondary mt-5">Nochmals Spielen</button></a></div>';
             
                 blackJackContent.insertAdjacentHTML("beforeend", htmlString);
             })
@@ -324,7 +324,7 @@ function displayWinner(winner){
                 displayWinner(winner);
 
             });
-    }, 2000);
+    }, 3000);
 
 }
 
@@ -339,7 +339,7 @@ function getEndOfGameInfo(winner){
 
     request.onload = function(){
         if(request.readyState == 4 && request.status == 200){
-            data = JSON.parse(request.responseText);
+            data = JSON.parse(request.responseText);  
         }
     }
 

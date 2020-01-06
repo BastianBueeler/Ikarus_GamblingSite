@@ -116,9 +116,11 @@ class BlackJackGame{
         }
 
         if($cardsWorth > 21){
+            $amountOfAss = 0;
+
             //falls über 21 schauen ob Ass dabei ist
             foreach($cards as &$card){
-                if(strpos($card, 'Ass') >= 0){
+                if(strpos($card, 'Ass')){
                     $amountOfAss += 1;
                 }
             }
@@ -222,6 +224,143 @@ class BlackJackGame{
         ];
         //rückgabe von neuem vermögen und wie viel geld man erhält
         return $return;
+    }
+
+
+    function addOneToCountedBlackJackGames($username){
+        include("../dbconnector.inc.php");
+
+        $statistikId = $this->getStatistikIdFromUser($username);
+
+        $stmt = $mysqli->prepare("SELECT CountedBlackJackGames FROM personstatistic WHERE ID = ?");
+        
+        $stmt->bind_param("i", $statistikId);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            while($row = $result->fetch_assoc()){
+                $CountedBlackJackGames = $row['CountedBlackJackGames'];
+            }
+        }
+
+        $newCountedBlackJackGames = $CountedBlackJackGames + 1;
+
+        $stmt = $mysqli->prepare("UPDATE personstatistic SET CountedBlackJackGames = ? WHERE ID = ?");
+
+        $stmt->bind_param("is", $newCountedBlackJackGames, $statistikId);
+
+        $stmt->execute();
+    }
+
+
+    function addOneToBlackJackWins($username){
+        include("../dbconnector.inc.php");
+
+        $statistikId = $this->getStatistikIdFromUser($username);
+
+        $stmt = $mysqli->prepare("SELECT BlackJackWins FROM personstatistic WHERE ID = ?");
+
+        $stmt->bind_param("i", $statistikId);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            while($row = $result->fetch_assoc()){
+                $BlackJackWins = $row['BlackJackWins'];
+            }
+        }
+
+        $newBlackJackWins = $BlackJackWins + 1;
+
+        $stmt = $mysqli->prepare("UPDATE personstatistic SET BlackJackWins = ? WHERE ID = ?");
+
+        $stmt->bind_param("is", $newBlackJackWins, $statistikId);
+
+        $stmt->execute();
+    }
+
+
+    function addMoneyToMoneySpent($money, $username){
+        include("../dbconnector.inc.php");
+
+        $statistikId = $this->getStatistikIdFromUser($username);
+
+        $stmt = $mysqli->prepare("SELECT MoneySpentBlackJack FROM personstatistic WHERE ID = ?");
+
+        $stmt->bind_param("i", $statistikId);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            while($row = $result->fetch_assoc()){
+                $MoneySpentBlackJack = $row['MoneySpentBlackJack'];
+            }
+        }
+
+        $newMoneySpentBlackJack = $MoneySpentBlackJack + $money;
+
+        $stmt = $mysqli->prepare("UPDATE personstatistic SET MoneySpentBlackJack = ? WHERE ID = ?");
+
+        $stmt->bind_param("is", $newMoneySpentBlackJack, $statistikId);
+
+        $stmt->execute();
+    }
+
+
+    function addMoneyToMoneyWon($money, $username){
+        include("../dbconnector.inc.php");
+
+        $statistikId = $this->getStatistikIdFromUser($username);
+
+        $stmt = $mysqli->prepare("SELECT MoneyWonBlackJack FROM personstatistic WHERE ID = ?");
+
+        $stmt->bind_param("i", $statistikId);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            while($row = $result->fetch_assoc()){
+                $MoneyWonBlackJack = $row['MoneyWonBlackJack'];
+            }
+        }
+
+        $newMoneyWonBlackJack = $MoneyWonBlackJack + $money;
+
+        $stmt = $mysqli->prepare("UPDATE personstatistic SET MoneyWonBlackJack = ? WHERE ID = ?");
+
+        $stmt->bind_param("is", $newMoneyWonBlackJack, $statistikId);
+
+        $stmt->execute();
+    }
+
+    
+    function getStatistikIdFromUser($username){
+        include("../dbconnector.inc.php");
+        
+        $stmt = $mysqli->prepare("SELECT fk_statistic FROM person WHERE username = ?");
+
+        $stmt->bind_param("s", $username); 
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if($stmt->affected_rows !== 0){
+            while($row = $result->fetch_assoc()){
+                $fk_statistic = $row['fk_statistic'];
+            }
+        }
+
+        return $fk_statistic;
     }
 }
 ?>
