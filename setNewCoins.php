@@ -33,11 +33,10 @@
         //aktuelles Datum
         $date = date("Y-m-d", time());; 
 
-        //Wenn Timestamp null oder kleiner als das aktuelle Datum ist
-        if($TimeStamp == null || $TimeStamp < $date){
-
-            //Wenn die Ikaruscoins 0 sind, setz den Wert wieder auf 50, update die Datenbank und gib eine Meldung aus.
-            if($IkarusCoins == 0){
+        //Wenn die Ikaruscoins 0 sind
+        if($IkarusCoins == 0){
+            //Wenn Timestamp null oder kleiner als das aktuelle Datum ist, setz den Wert wieder auf 50, update die Datenbank und gib eine Meldung aus.
+            if($TimeStamp == null || $TimeStamp < $date){
                 $newCoinValue = 50;
                 $stmt = $mysqli->prepare("UPDATE person SET IkarusCoins = ?, Timestamp = ? WHERE username = ?");
                 $stmt->bind_param("iss", $newCoinValue, $date, $username);
@@ -46,11 +45,11 @@
                 echo '<script language="javascript">';
                 echo 'alert("Sie bekommen 50 neue Coins, da Sie keine mehr haben und Sie einmal täglich haben können.")';
                 echo '</script>';
-            }
-        } else {
-            echo '<script language="javascript">';
-            echo 'alert("Sie müssen bis morgen warten, um neue Coins zu bekommen.")';
-            echo '</script>';
-        } 
+            } else {
+                echo '<script language="javascript">';
+                echo 'alert("Sie müssen bis morgen warten, um neue Coins zu bekommen.")';
+                echo '</script>';
+            } 
+        }
     }
 ?>
