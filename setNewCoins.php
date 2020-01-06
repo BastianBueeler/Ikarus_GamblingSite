@@ -33,7 +33,7 @@
         //aktuelles Datum
         $date = date("Y-m-d", time());; 
 
-        //Wenn Timestamp null oder kleiner ist
+        //Wenn Timestamp null oder kleiner als das aktuelle Datum ist
         if($TimeStamp == null || $TimeStamp < $date){
 
             //Wenn die Ikaruscoins 0 sind, setz den Wert wieder auf 50, update die Datenbank und gib eine Meldung aus.
